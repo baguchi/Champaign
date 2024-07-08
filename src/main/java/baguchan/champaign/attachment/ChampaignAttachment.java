@@ -4,6 +4,7 @@ import baguchan.champaign.Champaign;
 import baguchan.champaign.entity.AbstractWorkerAllay;
 import baguchan.champaign.music.MusicSummon;
 import baguchan.champaign.packet.AddMusicPacket;
+import baguchan.champaign.registry.ModAttachments;
 import baguchan.champaign.registry.ModMemorys;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -46,6 +47,8 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
 
                 Entity entity = getMusicList().get(this.musicIndex).value().getEntityType().create(serverLevel);
 
+                OwnerAttachment ownerAttachment = entity.getData(ModAttachments.OWNER);
+                ownerAttachment.setOwnerID(player.getUUID());
                 entity.setPos(player.position());
                 if (entity instanceof Mob mob) {
                     mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null);

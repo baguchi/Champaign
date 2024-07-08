@@ -28,11 +28,22 @@ public class RenderHelper {
     private static final ResourceLocation TEXTURE_SELECT = ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "hud/hotbar_select");
 
 
-    private static void renderSlot(GuiGraphics graphics, int pX, int pY, EntityType<?> entityType) {
-        if (entityType != null) {
-            Entity entity = entityType.create(Minecraft.getInstance().level);
+    private static void renderSlot(GuiGraphics graphics, int pX, int pY, MusicSummon musicSummon) {
+        if (musicSummon != null) {
+            Entity entity = musicSummon.getEntityType().create(Minecraft.getInstance().level);
             if (entity instanceof LivingEntity livingEntity) {
+                graphics.pose().pushPose();
+
                 InventoryScreen.renderEntityInInventoryFollowsAngle(graphics, pX + 2, pY + 2, pX + 19, pY + 19, 25, 0.0625F, 0F, 0F, livingEntity);
+
+                graphics.pose().popPose();
+                graphics.pose().pushPose();
+
+                String s = String.valueOf(musicSummon.summonCost());
+                graphics.pose().translate(0.0F, 0.0F, 200.0F);
+                graphics.drawString(Minecraft.getInstance().font, s, pX + 22 - 2 - Minecraft.getInstance().font.width(s), pY + 12, 16777215, true);
+
+                graphics.pose().popPose();
             }
         }
     }
@@ -58,7 +69,7 @@ public class RenderHelper {
             for (int i = 0; i < slots; ++i) {
                 int jx = px - 10 - i * 20;
                 if (!list.isEmpty() && list.size() > i) {
-                    renderSlot(graphics, jx, py, list.get(i).value().entityType());
+                    renderSlot(graphics, jx, py, list.get(i).value());
                     graphics.blitSprite(TEXTURE, jx, py, 22, 22);
 
                 } else {
@@ -68,12 +79,12 @@ public class RenderHelper {
             }
             if (selected < slots) {
                 int jx = px - 10 - selected * 20;
-                graphics.blitSprite(TEXTURE_SELECT, jx - 2, py - 2, 24, 24);
+                graphics.blitSprite(TEXTURE_SELECT, jx - 1, py - 1, 24, 24);
             }
 
 
             if (!list.isEmpty() && list.size() > selected) {
-                int jx = px - 10 - selected * 20;
+                int jx = px;
                 MusicSummon select = list.get(selected).value();
                 drawHighlight(graphics, jx, py, select.entityType());
             }
