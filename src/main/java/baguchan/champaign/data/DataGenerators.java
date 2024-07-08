@@ -1,7 +1,7 @@
-package baguchan.champaign.data.generator;
+package baguchan.champaign.data;
 
 import baguchan.champaign.Champaign;
-import baguchan.champaign.data.ModLootTableProvider;
+import baguchan.champaign.data.generator.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -27,6 +27,8 @@ public class DataGenerators {
         BlockTagsProvider blocktags = new BlockTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper());
         event.getGenerator().addProvider(event.includeServer(), blocktags);
         event.getGenerator().addProvider(event.includeServer(), new ItemTagGenerator(packOutput, lookupProvider, blocktags.contentsGetter(), event.getExistingFileHelper()));
+        event.getGenerator().addProvider(event.includeServer(), new EntityTagGenerator(packOutput, lookupProvider, event.getExistingFileHelper()));
+
         event.getGenerator().addProvider(event.includeServer(), ModLootTableProvider.create(packOutput, lookupProvider));
         event.getGenerator().addProvider(event.includeServer(), new CraftingGenerator(packOutput, lookupProvider));
 

@@ -41,7 +41,7 @@ public class SummonPacket implements CustomPacketPayload, IPayloadHandler<Summon
             Player player = context.player();
             if (player instanceof ServerPlayer serverPlayer) {
                 ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
-                attachment.summonAllay(serverPlayer);
+                attachment.summonEntity(serverPlayer);
             }
         });
     }

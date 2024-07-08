@@ -1,7 +1,7 @@
 package baguchan.champaign;
 
 import baguchan.champaign.attachment.ChampaignAttachment;
-import baguchan.champaign.packet.SyncAllayPacket;
+import baguchan.champaign.packet.AddMusicPacket;
 import baguchan.champaign.registry.ModAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,9 @@ public class CommonEvents {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getSummonCount(), attachment.getMaxSummonCount()));
+            attachment.getMusicList().forEach(musicSummon -> {
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value()));
+            });
         }
     }
 
@@ -27,7 +29,9 @@ public class CommonEvents {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getSummonCount(), attachment.getMaxSummonCount()));
+            attachment.getMusicList().forEach(musicSummon -> {
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value()));
+            });
         }
     }
 
@@ -36,7 +40,9 @@ public class CommonEvents {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getSummonCount(), attachment.getMaxSummonCount()));
+            attachment.getMusicList().forEach(musicSummon -> {
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value()));
+            });
         }
     }
 }
