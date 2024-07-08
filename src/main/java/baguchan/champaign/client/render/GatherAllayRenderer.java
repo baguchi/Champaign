@@ -1,6 +1,6 @@
 package baguchan.champaign.client.render;
 
-import baguchan.champaign.client.WorkerAllayModel;
+import baguchan.champaign.client.model.WorkerAllayModel;
 import baguchan.champaign.entity.AbstractWorkerAllay;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

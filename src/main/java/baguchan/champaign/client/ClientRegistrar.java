@@ -64,13 +64,13 @@ public class ClientRegistrar {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
             guiGraphics.blitSprite(ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 22, 22);
-            String s = String.valueOf(attachment.getAllayCount());
+            String s = String.valueOf(attachment.getSummonCount());
             guiGraphics.drawString(minecraft.font, s, i - 91 - 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
         } else {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
             guiGraphics.blitSprite(ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 22, 22);
-            String s = String.valueOf(attachment.getAllayCount());
+            String s = String.valueOf(attachment.getSummonCount());
             guiGraphics.drawString(minecraft.font, s, i + 91 + 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
 
         }

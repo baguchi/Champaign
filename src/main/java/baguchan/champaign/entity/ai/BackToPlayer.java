@@ -53,7 +53,7 @@ public class BackToPlayer extends Behavior<AbstractWorkerAllay> {
             if (entity instanceof ServerPlayer serverPlayer) {
                 if (serverPlayer.distanceTo(mob) < 1.5F) {
                     ChampaignAttachment attachment = serverPlayer.getData(ModAttachments.CHAMPAIGN);
-                    attachment.setAllayCount(attachment.getAllayCount() + 1, serverPlayer);
+                    attachment.setAllayCount(attachment.getSummonCount() + 1, serverPlayer);
                     mob.giveResource();
                     mob.discard();
                 } else {

@@ -1,4 +1,4 @@
-package baguchan.champaign.client;
+package baguchan.champaign.client.model;
 
 import baguchan.champaign.entity.AbstractWorkerAllay;
 import com.mojang.blaze3d.vertex.PoseStack;

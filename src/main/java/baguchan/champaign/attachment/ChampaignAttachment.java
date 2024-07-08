@@ -27,8 +27,8 @@ import java.util.List;
 
 public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     private boolean champain;
-    private int allayCount = 3;
-    private int maxAllayCount = 3;
+    private int summonCount = 3;
+    private int maxSummonCount = 3;
 
     public void summonAllay(ServerPlayer player) {
         Vec3 vec3 = player.getEyePosition();
@@ -41,7 +41,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
 
         Vec3 pos = hitResult.getLocation();
         if (hitResult.getType() != HitResult.Type.MISS) {
-            if (allayCount > 0) {
+            if (summonCount > 0) {
                 hitResult = BlockHitResult.miss(pos, Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(pos));
 
                 if (hitResult instanceof BlockHitResult blockHitResult) {
@@ -54,7 +54,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                         serverLevel.addFreshEntity(thrownpotion);
                     }
 
-                    this.setAllayCount(this.getAllayCount() - 1, player);
+                    this.setAllayCount(this.getSummonCount() - 1, player);
                     player.playSound(SoundEvents.ALLAY_ITEM_GIVEN);
                 }
             }
@@ -82,38 +82,38 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     }
 
     public void setAllayCount(int allayCount, Player player) {
-        this.allayCount = allayCount;
+        this.summonCount = allayCount;
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.summonCount, this.maxSummonCount));
         }
     }
 
-    public int getAllayCount() {
-        return allayCount;
+    public int getSummonCount() {
+        return summonCount;
     }
 
-    public int getMaxAllayCount() {
-        return maxAllayCount;
+    public int getMaxSummonCount() {
+        return maxSummonCount;
     }
 
     public void setMaxAllayCount(int maxAllayCount, Player player) {
-        this.maxAllayCount = maxAllayCount;
+        this.maxSummonCount = maxAllayCount;
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.summonCount, this.maxSummonCount));
         }
     }
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
-        nbt.putInt("AllayCount", this.allayCount);
-        nbt.putInt("MaxAllayCount", this.maxAllayCount);
+        nbt.putInt("SummonCount", this.summonCount);
+        nbt.putInt("MaxSummonCount", this.maxSummonCount);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        this.allayCount = nbt.getInt("AllayCount");
-        this.maxAllayCount = nbt.getInt("MaxAllayCount");
+        this.summonCount = nbt.getInt("SummonCount");
+        this.maxSummonCount = nbt.getInt("MaxSummonCount");
     }
 }

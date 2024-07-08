@@ -4,9 +4,8 @@ package baguchan.champaign;
 import baguchan.champaign.packet.CallPacket;
 import baguchan.champaign.packet.SummonPacket;
 import baguchan.champaign.packet.SyncAllayPacket;
-import baguchan.champaign.registry.ModAttachments;
-import baguchan.champaign.registry.ModEntities;
-import baguchan.champaign.registry.ModMemorys;
+import baguchan.champaign.registry.*;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -17,6 +16,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+
+import java.util.Locale;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Champaign.MODID)
@@ -32,7 +33,8 @@ public class Champaign
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::setupPackets);
         NeoForge.EVENT_BUS.register(this);
-
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
         ModEntities.ENTITIES_REGISTRY.register(modEventBus);
         ModMemorys.MEMORY_REGISTRY.register(modEventBus);
         ModAttachments.ATTACHMENT_TYPES.register(modEventBus);
@@ -55,5 +57,9 @@ public class Champaign
     public void onServerStarting(ServerStartingEvent event)
     {
 
+    }
+
+    public static ResourceLocation prefix(String name) {
+        return ResourceLocation.fromNamespaceAndPath(Champaign.MODID, name.toLowerCase(Locale.ROOT));
     }
 }

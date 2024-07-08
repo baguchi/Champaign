@@ -18,7 +18,7 @@ public class CommonEvents {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getAllayCount(), attachment.getMaxAllayCount()));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getSummonCount(), attachment.getMaxSummonCount()));
         }
     }
 
@@ -27,7 +27,7 @@ public class CommonEvents {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getAllayCount(), attachment.getMaxAllayCount()));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getSummonCount(), attachment.getMaxSummonCount()));
         }
     }
 
@@ -36,7 +36,7 @@ public class CommonEvents {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getAllayCount(), attachment.getMaxAllayCount()));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getSummonCount(), attachment.getMaxSummonCount()));
         }
     }
 }

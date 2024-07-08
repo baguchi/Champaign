@@ -2,5 +2,8 @@
   "key.champaign.summon": "Summon Allay",
   "key.champaign.call": "Call Allay",
   "key.champaign.range": "Show and Change Range",
-  "key.categories.champaign": "Champaign"
+  "key.categories.champaign": "Champaign",
+  "block.champaign.music_table": "Music Table",
+  "item.champaign.music_pattern": "Music Pattern",
+  "container.champaign.music_table": "Music Table"
 }

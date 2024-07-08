@@ -2,5 +2,8 @@
   "key.champaign.summon": "アレイを召喚",
   "key.champaign.call": "アレイを呼ぶ",
   "key.champaign.range": "範囲を表示または変更",
-  "key.categories.champaign": "キャンペーン"
+  "key.categories.champaign": "キャンペーン",
+  "block.champaign.music_table": "楽譜台",
+  "item.champaign.music_pattern": "楽譜",
+  "container.champaign.music_table": "楽譜台"
 }
