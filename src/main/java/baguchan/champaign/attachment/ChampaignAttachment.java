@@ -52,7 +52,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                 }
                 player.getInventory().clearOrCountMatchingItems(predicate -> {
                     return predicate.getItem() == Items.LAPIS_LAZULI;
-                }, count, player.getInventory());
+                }, musicSummon.value().summonCost(), player.getInventory());
 
                 serverLevel.addFreshEntity(entity);
                 serverLevel.playSound(null, player, SoundEvents.NOTE_BLOCK_FLUTE.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
