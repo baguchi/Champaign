@@ -59,7 +59,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                 }, musicSummon.value().summonCost(), player.getInventory());
 
                 serverLevel.addFreshEntity(entity);
-                serverLevel.playSound(null, player, SoundEvents.NOTE_BLOCK_FLUTE.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
+                serverLevel.playSound(null, player, SoundEvents.NOTE_BLOCK_GUITAR.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
             } else {
                 serverLevel.playSound(null, player, SoundEvents.THORNS_HIT, SoundSource.PLAYERS, 1.0F, 1.0F);
             }
