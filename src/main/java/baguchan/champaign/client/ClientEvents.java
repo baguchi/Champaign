@@ -14,6 +14,7 @@ import baguchan.champaign.registry.ModAttachments;
 import baguchan.champaign.registry.ModItems;
 import baguchan.champaign.registry.ModKeyMappings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
@@ -50,7 +51,11 @@ public class ClientEvents {
             HumanoidArm humanoidArm = flag ? livingEntity.getMainHandItem().is(ModItems.LUTE.get()) ? HumanoidArm.RIGHT : livingEntity.getOffhandItem().is(ModItems.LUTE.get()) ? HumanoidArm.LEFT : HumanoidArm.RIGHT : HumanoidArm.LEFT;
 
             if (livingEntity.isHolding(ModItems.LUTE.get())) {
-                if (controller.getAnimationState(ModAnimations.PLAYING_LUTE).isStarted()) {
+                if (event.getModel() instanceof HumanoidModel<?> humanoidModel) {
+                    humanoidModel.leftArm.xRot = 0.0F;
+                    humanoidModel.rightArm.xRot = 0.0F;
+
+                    if (controller.getAnimationState(ModAnimations.PLAYING_LUTE).isStarted()) {
                     if (humanoidArm == HumanoidArm.RIGHT) {
                         rootModel.animateBagu(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_right, event.getAgeInTick());
                     } else {
@@ -63,9 +68,10 @@ public class ClientEvents {
                         rootModel.applyStaticBagu(LuteAnimation.lute_hold_left);
                     }
                 }
-                if (event.getModel() instanceof PlayerModel<?> humanoidModel) {
-                    humanoidModel.leftSleeve.copyFrom(humanoidModel.leftArm);
-                    humanoidModel.rightSleeve.copyFrom(humanoidModel.rightArm);
+                    if (event.getModel() instanceof PlayerModel<?> playerModel) {
+                        playerModel.leftSleeve.copyFrom(playerModel.leftArm);
+                        playerModel.rightSleeve.copyFrom(playerModel.rightArm);
+                }
                 }
             }
         }
