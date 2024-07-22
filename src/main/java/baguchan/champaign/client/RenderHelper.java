@@ -102,7 +102,7 @@ public class RenderHelper {
         MutableComponent mutablecomponent = Component.empty().append(selectedEntity.getDescription());
         Component highlightTip = mutablecomponent;
         int fontWidth = Minecraft.getInstance().font.width(highlightTip);
-        int nx = (screenWidth - fontWidth) / 2;
+        int nx = (screenWidth - (fontWidth / 2));
         int ny = py - 19;
 
         l = 255;

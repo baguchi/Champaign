@@ -52,6 +52,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                 entity.setPos(player.position());
                 if (entity instanceof Mob mob) {
                     mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+                    mob.dropPreservedEquipment();
                 }
                 player.getInventory().clearOrCountMatchingItems(predicate -> {
                     return predicate.getItem() == Items.LAPIS_LAZULI;

@@ -4,6 +4,7 @@ package baguchan.champaign.client;
 import baguchan.champaign.Champaign;
 import baguchan.champaign.client.render.GatherAllayRenderer;
 import baguchan.champaign.registry.ModEntities;
+import baguchan.champaign.registry.ModItems;
 import baguchan.champaign.registry.ModKeyMappings;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,6 @@ public class ClientRegistrar {
 
     @SubscribeEvent
     public static void registerKeyMapping(RegisterKeyMappingsEvent event) {
-        event.register(ModKeyMappings.KEY_CHANGE_MUSIC);
         event.register(ModKeyMappings.KEY_SUMMON);
     }
 
@@ -41,7 +41,7 @@ public class ClientRegistrar {
             Minecraft minecraft = Minecraft.getInstance();
             Window window = minecraft.getWindow();
             LocalPlayer player = minecraft.player;
-            if (ModKeyMappings.KEY_CHANGE_MUSIC.isDown() && player != null) {
+            if (player != null && player.getUseItem().is(ModItems.LUTE.get())) {
                 RenderHelper.renderEntityContent(guiGraphics, guiGraphics.guiWidth(), guiGraphics.guiHeight());
             }
         });

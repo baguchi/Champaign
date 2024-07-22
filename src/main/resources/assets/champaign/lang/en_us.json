@@ -4,5 +4,8 @@
   "key.categories.champaign": "Champaign",
   "block.champaign.music_table": "Music Table",
   "item.champaign.music_pattern": "Music Pattern",
-  "container.champaign.music_table": "Music Table"
+  "item.champaign.lute": "Lute",
+  "container.champaign.music_table": "Music Table",
+  "item.champaign.lute.tooltip.description1": "Summon Mob",
+  "item.champaign.lute.tooltip.description2": "Change Music"
 }

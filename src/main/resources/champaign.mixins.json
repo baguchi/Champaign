@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "baguchan.champaign.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "tofucraft.refmap.json",
+  "mixins": [
+    "LivingEntityMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -5,13 +5,16 @@ import baguchan.champaign.attachment.OwnerAttachment;
 import baguchan.champaign.packet.AddMusicPacket;
 import baguchan.champaign.registry.ModAttachments;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Champaign.MODID)
@@ -21,22 +24,34 @@ public class CommonEvents {
     public static void onTarget(LivingChangeTargetEvent event) {
         LivingEntity entity = event.getEntity();
         OwnerAttachment attachment = entity.getData(ModAttachments.OWNER);
-        if (event.getOriginalTarget() instanceof OwnableEntity ownableEntity) {
+        if (event.getOriginalAboutToBeSetTarget() instanceof OwnableEntity ownableEntity) {
             if (attachment.getOwnerID() != null && attachment.getOwnerID() == ownableEntity.getOwnerUUID()) {
-                event.setNewTarget(null);
+                event.setNewAboutToBeSetTarget(null);
                 event.setCanceled(true);
             }
         }
-        if (event.getOriginalTarget() != null && attachment.getOwnerID() != null && attachment.getOwnerID() == event.getOriginalTarget().getUUID()) {
-            event.setNewTarget(null);
+        if (event.getOriginalAboutToBeSetTarget() != null && attachment.getOwnerID() != null && attachment.getOwnerID() == event.getOriginalAboutToBeSetTarget().getUUID()) {
+            event.setNewAboutToBeSetTarget(null);
             event.setCanceled(true);
         }
 
-        if (event.getOriginalTarget() != null && attachment.getOwnerID() != null) {
-            OwnerAttachment attachment2 = event.getOriginalTarget().getData(ModAttachments.OWNER);
+        if (event.getOriginalAboutToBeSetTarget() != null && attachment.getOwnerID() != null) {
+            OwnerAttachment attachment2 = event.getOriginalAboutToBeSetTarget().getData(ModAttachments.OWNER);
             if (attachment.getOwnerID() == attachment2.getOwnerID()) {
-                event.setNewTarget(null);
+                event.setNewAboutToBeSetTarget(null);
                 event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTickTarget(EntityTickEvent.Post event) {
+        Entity entity = event.getEntity();
+        OwnerAttachment attachment = entity.getData(ModAttachments.OWNER);
+        if (attachment.getOwnerID() != null) {
+            Player player = entity.level().getPlayerByUUID(attachment.getOwnerID());
+            if (player != null && entity instanceof Mob livingEntity && player.getLastHurtByMob() != null) {
+                livingEntity.setTarget(player.getLastHurtByMob());
             }
         }
     }

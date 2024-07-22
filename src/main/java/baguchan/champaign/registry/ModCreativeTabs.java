@@ -17,6 +17,7 @@ public class ModCreativeTabs {
     public static void registerCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.acceptAll(generateMusic());
+            event.accept(ModItems.LUTE.get());
         }
     }
 

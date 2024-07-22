@@ -15,7 +15,8 @@ license="${mod_license}"
 
 # A URL to refer people to when problems occur with this mod
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
-
+[[mixins]]
+config = "${mod_id}.mixins.json"
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 
@@ -84,7 +85,13 @@ description='''${mod_description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
-
+[[dependencies.${ mod_id }]]
+modId = "bagus_lib"
+type = "required"
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+versionRange = "${bagus_lib_version_range}"
+ordering = "NONE"
+side = "BOTH"
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

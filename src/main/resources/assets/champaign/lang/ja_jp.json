@@ -1,8 +1,11 @@
 {
-  "key.champaign.summon": "アレイを召喚",
+  "key.champaign.summon": "召喚",
   "key.champaign.change_music": "音楽を変える",
   "key.categories.champaign": "キャンペーン",
   "block.champaign.music_table": "楽譜台",
   "item.champaign.music_pattern": "楽譜",
-  "container.champaign.music_table": "楽譜台"
+  "item.champaign.lute": "リュート",
+  "container.champaign.music_table": "楽譜台",
+  "item.champaign.lute.tooltip.description1": "モブを召喚",
+  "item.champaign.lute.tooltip.description2": "音楽を変える"
 }

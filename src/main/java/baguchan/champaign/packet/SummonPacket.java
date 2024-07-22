@@ -1,7 +1,9 @@
 package baguchan.champaign.packet;
 
+import bagu_chan.bagus_lib.util.client.AnimationUtil;
 import baguchan.champaign.Champaign;
 import baguchan.champaign.attachment.ChampaignAttachment;
+import baguchan.champaign.registry.ModAnimations;
 import baguchan.champaign.registry.ModAttachments;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -42,6 +44,7 @@ public class SummonPacket implements CustomPacketPayload, IPayloadHandler<Summon
             if (player instanceof ServerPlayer serverPlayer) {
                 ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
                 attachment.summonEntity(serverPlayer);
+                AnimationUtil.handleAnimationPacket(serverPlayer, ModAnimations.PLAYING_LUTE);
             }
         });
     }
