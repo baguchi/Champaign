@@ -1,6 +1,5 @@
 package baguchan.champaign.data.generator.loot;
 
-import baguchan.champaign.registry.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
@@ -32,7 +31,6 @@ public class BlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        dropSelf(ModBlocks.MUSIC_TABLE.get());
     }
 
     @Override

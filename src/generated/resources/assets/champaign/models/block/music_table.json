@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/orientable",
-  "textures": {
-    "front": "champaign:block/music_table",
-    "side": "champaign:block/music_table",
-    "top": "champaign:block/music_table_top"
-  }
-}

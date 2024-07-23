@@ -2,10 +2,12 @@ package baguchan.champaign.packet;
 
 import baguchan.champaign.Champaign;
 import baguchan.champaign.attachment.ChampaignAttachment;
+import baguchan.champaign.client.render.toast.LearningToast;
 import baguchan.champaign.music.MusicSummon;
 import baguchan.champaign.registry.ModAttachments;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
@@ -23,21 +25,25 @@ public class AddMusicPacket implements CustomPacketPayload, IPayloadHandler<AddM
 
     private int entityId;
     private MusicSummon musicSummon;
+    private boolean makeToast;
 
 
-    public AddMusicPacket(int id, MusicSummon musicSummon) {
+    public AddMusicPacket(int id, MusicSummon musicSummon, boolean toast) {
         this.entityId = id;
         this.musicSummon = musicSummon;
+        this.makeToast = toast;
     }
 
-    public AddMusicPacket(Entity entity, MusicSummon musicSummon) {
+    public AddMusicPacket(Entity entity, MusicSummon musicSummon, boolean toast) {
         this.entityId = entity.getId();
         this.musicSummon = musicSummon;
+        this.makeToast = toast;
     }
 
     public void write(FriendlyByteBuf buffer) {
         buffer.writeInt(this.entityId);
         buffer.writeJsonWithCodec(MusicSummon.CODEC, this.musicSummon);
+        buffer.writeBoolean(this.makeToast);
     }
 
     @Override
@@ -46,7 +52,7 @@ public class AddMusicPacket implements CustomPacketPayload, IPayloadHandler<AddM
     }
 
     public AddMusicPacket(FriendlyByteBuf buffer) {
-        this(buffer.readInt(), buffer.readJsonWithCodec(MusicSummon.CODEC));
+        this(buffer.readInt(), buffer.readJsonWithCodec(MusicSummon.CODEC), buffer.readBoolean());
     }
 
     @Override
@@ -56,6 +62,9 @@ public class AddMusicPacket implements CustomPacketPayload, IPayloadHandler<AddM
             if (entity != null && entity instanceof Player player) {
                 ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
                 attachment.addMusicList(Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(musicSummon), player);
+                if (player == Minecraft.getInstance().player && makeToast) {
+                    Minecraft.getInstance().getToasts().addToast(new LearningToast(Component.translatable("toast.champaign.learning"), Component.translatable("toast.champaign.learn_entity", musicSummon.entityType().getDescription())));
+                }
             }
         });
     }

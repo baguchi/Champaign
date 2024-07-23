@@ -1,7 +1,6 @@
 package baguchan.champaign.data.generator;
 
 import baguchan.champaign.Champaign;
-import baguchan.champaign.registry.ModBlocks;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +19,6 @@ public class BlockstateGenerator extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        orientableWithoutSideBlock(ModBlocks.MUSIC_TABLE.get());
     }
 
 

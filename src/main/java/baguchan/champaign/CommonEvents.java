@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
+import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -57,12 +58,20 @@ public class CommonEvents {
     }
 
     @SubscribeEvent
+    public static void progressAdvancement(AdvancementEvent.AdvancementProgressEvent event) {
+        Player player = event.getEntity();
+        ChampaignAttachment attachment2 = player.getData(ModAttachments.CHAMPAIGN);
+
+        attachment2.trackDiscoveries(player, event.getAdvancement());
+    }
+
+    @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
             attachment.getMusicList().forEach(musicSummon -> {
-                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value()));
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value(), false));
             });
         }
     }
@@ -73,18 +82,18 @@ public class CommonEvents {
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
             attachment.getMusicList().forEach(musicSummon -> {
-                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value()));
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value(), false));
             });
         }
     }
 
     @SubscribeEvent
-    public static void onChangeDimension(PlayerEvent.PlayerRespawnEvent event) {
+    public static void onRespawnDimension(PlayerEvent.PlayerRespawnEvent event) {
         Player player = event.getEntity();
         ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
         if (player instanceof ServerPlayer serverPlayer) {
             attachment.getMusicList().forEach(musicSummon -> {
-                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value()));
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value(), false));
             });
         }
     }

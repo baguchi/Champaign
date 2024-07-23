@@ -1,4 +1,5 @@
 {
   "target": "minecraft:iron_golem",
+  "learning_advancement": "minecraft:adventure/summon_iron_golem",
   "summon_cost": 32
 }

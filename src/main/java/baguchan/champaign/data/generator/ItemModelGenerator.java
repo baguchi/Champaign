@@ -1,7 +1,6 @@
 package baguchan.champaign.data.generator;
 
 import baguchan.champaign.Champaign;
-import baguchan.champaign.registry.ModBlocks;
 import baguchan.champaign.registry.ModItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -24,8 +23,6 @@ public class ItemModelGenerator extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        //block
-        toBlock(ModBlocks.MUSIC_TABLE);
         basicItem(ModItems.MUSIC_PATTERN.get());
     }
 

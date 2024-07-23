@@ -40,7 +40,6 @@ public class Champaign
 
         NeoForge.EVENT_BUS.register(this);
         ModMusicSummons.MUSIC_SUMMON.register(modEventBus);
-        ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModEntities.ENTITIES_REGISTRY.register(modEventBus);
         ModMemorys.MEMORY_REGISTRY.register(modEventBus);

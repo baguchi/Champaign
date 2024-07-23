@@ -7,5 +7,7 @@
   "item.champaign.lute": "Lute",
   "container.champaign.music_table": "Music Table",
   "item.champaign.lute.tooltip.description1": "Summon Mob",
-  "item.champaign.lute.tooltip.description2": "Change Music"
+  "item.champaign.lute.tooltip.description2": "Change Music",
+  "toast.champaign.learn_entity": "You Learned %s",
+  "toast.champaign.learning": "You Learned Music!"
 }

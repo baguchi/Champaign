@@ -6,9 +6,8 @@ import baguchan.champaign.music.MusicSummon;
 import baguchan.champaign.packet.AddMusicPacket;
 import baguchan.champaign.registry.ModAttachments;
 import baguchan.champaign.registry.ModMemorys;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +35,7 @@ import java.util.Optional;
 public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     private final List<Holder<MusicSummon>> musicList = Lists.newArrayList();
     private int musicIndex;
+    private boolean sync;
 
 
     public void summonEntity(ServerPlayer player) {
@@ -43,7 +43,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         if (getMusicList().get(this.musicIndex) != null && !getMusicList().isEmpty()) {
             Holder<MusicSummon> musicSummon = getMusicList().get(this.musicIndex);
             int count = countLapis(player);
-            if (musicSummon.value().summonCost() <= count) {
+            if (musicSummon.value().summonCost() <= count || player.isCreative()) {
 
                 Entity entity = getMusicList().get(this.musicIndex).value().getEntityType().create(serverLevel);
 
@@ -54,10 +54,11 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                     mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
                     mob.dropPreservedEquipment();
                 }
-                player.getInventory().clearOrCountMatchingItems(predicate -> {
-                    return predicate.getItem() == Items.LAPIS_LAZULI;
-                }, musicSummon.value().summonCost(), player.getInventory());
-
+                if (!player.isCreative()) {
+                    player.getInventory().clearOrCountMatchingItems(predicate -> {
+                        return predicate.getItem() == Items.LAPIS_LAZULI;
+                    }, musicSummon.value().summonCost(), player.getInventory());
+                }
                 serverLevel.addFreshEntity(entity);
                 serverLevel.playSound(null, player, SoundEvents.NOTE_BLOCK_GUITAR.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
             } else {
@@ -136,7 +137,33 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     public void addMusicList(Holder<MusicSummon> music, Player player) {
         this.musicList.add(music);
         if (!player.level().isClientSide()) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new AddMusicPacket(player, music.value()));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new AddMusicPacket(player, music.value(), true));
+        }
+    }
+
+    public void trackDiscoveries(Player player, AdvancementHolder advancement) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            RegistryAccess registryAccess = serverPlayer.registryAccess();
+            this.trackMusicEntries(serverPlayer, registryAccess, advancement);
+            if (this.sync) {
+
+                this.sync = false;
+            }
+        }
+    }
+
+    private void trackMusicEntries(ServerPlayer serverPlayer, RegistryAccess registryAccess, AdvancementHolder advancement) {
+        Registry<MusicSummon> bestiaryEntries = registryAccess.registryOrThrow(MusicSummon.REGISTRY_KEY);
+        for (Holder.Reference<MusicSummon> entry : bestiaryEntries.holders().toList()) {
+            if (entry.value().learning_advancement().isPresent() && advancement.id().equals(entry.value().learning_advancement().get()) && !this.musicList.contains(entry)) {
+                this.musicList.add(entry);
+                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer, entry.value(), true));
+
+                this.sync = true;
+            }
+        }
+        if (this.sync) {
+            //PacketDistributor.sendToPlayer(serverPlayer, new GuidebookToastPacket(GuidebookToast.Icons.BESTIARY, "gui.aether_ii.toast.guidebook.bestiary", "gui.aether_ii.toast.guidebook.description"));
         }
     }
 
