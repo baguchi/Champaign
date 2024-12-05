@@ -1,0 +1,18 @@
+package baguchi.champaign.registry;
+
+import baguchi.bagus_lib.event.RegisterBagusAnimationEvents;
+import baguchi.champaign.Champaign;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+
+@EventBusSubscriber(modid = Champaign.MODID)
+public class ModAnimations {
+
+    public static final ResourceLocation PLAYING_LUTE = ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "playing_lute");
+
+    @SubscribeEvent
+    public static void onInitModel(RegisterBagusAnimationEvents event) {
+        event.addAnimationState(PLAYING_LUTE);
+    }
+}
