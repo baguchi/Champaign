@@ -13,7 +13,6 @@ import baguchi.champaign.registry.ModItems;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.HumanoidArm;
@@ -37,16 +36,19 @@ public class ClientEvents {
         if (controller != null && entity instanceof HumanoidRenderState humanoidRenderState) {
             boolean flag = humanoidRenderState.mainArm == HumanoidArm.RIGHT;
             if (event.getModel() instanceof HumanoidModel<?> humanoidModel) {
-                humanoidModel.leftArm.xRot = 0.0F;
-                humanoidModel.rightArm.xRot = 0.0F;
 
                 if (controller.getAnimationState(ModAnimations.PLAYING_LUTE).isStarted()) {
-                    event.animate(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_right, entity.ageInTicks);
-                    event.animate(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_left, entity.ageInTicks);
-                }
-                if (event.getModel() instanceof PlayerModel playerModel) {
-                    playerModel.leftSleeve.copyFrom(playerModel.leftArm);
-                    playerModel.rightSleeve.copyFrom(playerModel.rightArm);
+                    humanoidModel.leftArm.xRot = 0.0F;
+                    humanoidModel.rightArm.xRot = 0.0F;
+                    humanoidModel.leftArm.yRot = 0.0F;
+                    humanoidModel.rightArm.yRot = 0.0F;
+                    humanoidModel.leftArm.zRot = 0.0F;
+                    humanoidModel.rightArm.zRot = 0.0F;
+                    if (flag) {
+                        event.animate(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_right, entity.ageInTicks);
+                    } else {
+                        event.animate(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_left, entity.ageInTicks);
+                    }
                 }
             }
         }

@@ -37,7 +37,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
 
     public void summonEntity(ServerPlayer player) {
         ServerLevel serverLevel = player.serverLevel();
-        if (getMusicList().get(this.musicIndex) != null && !getMusicList().isEmpty()) {
+        if (!getMusicList().isEmpty() && getMusicList().get(this.musicIndex) != null) {
             Holder<MusicSummon> musicSummon = getMusicList().get(this.musicIndex);
             int count = countLapis(player);
             if (musicSummon.value().summonCost() <= count || player.isCreative()) {

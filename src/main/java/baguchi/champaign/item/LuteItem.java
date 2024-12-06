@@ -45,7 +45,7 @@ public class LuteItem extends Item {
     public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
         super.onStopUsing(stack, entity, count);
         if (!entity.level().isClientSide()) {
-            AnimationUtil.sendAnimation(entity, ModAnimations.PLAYING_LUTE);
+            AnimationUtil.sendStopAnimation(entity, ModAnimations.PLAYING_LUTE);
         }
     }
 
