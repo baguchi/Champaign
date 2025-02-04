@@ -4,8 +4,6 @@ import baguchi.champaign.registry.ModMemorys;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.profiling.Profiler;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -37,14 +35,13 @@ public class GatherAllay extends AbstractWorkerAllay {
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel p_376709_) {
-        ProfilerFiller profilerfiller = Profiler.get();
-        profilerfiller.push("allayGatherBrain");
-        this.getBrain().tick(p_376709_, this);
-        profilerfiller.pop();
-        profilerfiller.push("allayGatherActivityUpdate");
+    protected void customServerAiStep() {
+        this.level().getProfiler().push("allayGatherBrain");
+        this.getBrain().tick((ServerLevel) this.level(), this);
+        this.level().getProfiler().pop();
+        this.level().getProfiler().push("allayGatherActivityUpdate");
         GatherAllayAi.updateActivity(this);
-        profilerfiller.pop();
-        super.customServerAiStep(p_376709_);
+        this.level().getProfiler().pop();
+        super.customServerAiStep();
     }
 }

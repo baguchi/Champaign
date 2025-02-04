@@ -1,7 +1,9 @@
 package baguchi.champaign.client;
 
-import baguchi.bagus_lib.animation.BaguAnimationController;
-import baguchi.bagus_lib.client.event.BagusModelEvent;
+import bagu_chan.bagus_lib.animation.BaguAnimationController;
+import bagu_chan.bagus_lib.api.client.IRootModel;
+import bagu_chan.bagus_lib.client.event.BagusModelEvent;
+import bagu_chan.bagus_lib.util.client.AnimationUtil;
 import baguchi.champaign.Champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.client.animation.LuteAnimation;
@@ -15,9 +17,10 @@ import baguchi.champaign.registry.ModItems;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,11 +35,20 @@ public class ClientEvents {
     public static int pressSummonTick;
 
     @SubscribeEvent
+    public static void onInitModelEvent(BagusModelEvent.Init event) {
+        IRootModel rootModel = event.getRootModel();
+        if (event.isSupportedAnimateModel()) {
+            rootModel.getBagusRoot().getAllParts().forEach(ModelPart::resetPose);
+        }
+    }
+
+    @SubscribeEvent
     public static void onAnimateModel(BagusModelEvent.PostAnimate event) {
-        LivingEntityRenderState entity = event.getEntityRenderState();
-        BaguAnimationController controller = event.getBaguAnimationController();
-        if (controller != null && entity instanceof HumanoidRenderState humanoidRenderState) {
-            boolean flag = humanoidRenderState.mainArm == HumanoidArm.RIGHT;
+        Entity entity = event.getEntity();
+        IRootModel rootModel = event.getRootModel();
+        BaguAnimationController controller = AnimationUtil.getAnimationController(event.getEntity());
+        if (controller != null && entity instanceof Player player && event.isSupportedAnimateModel()) {
+            boolean flag = player.getMainArm() == HumanoidArm.RIGHT;
             if (event.getModel() instanceof HumanoidModel<?> humanoidModel) {
 
                 if (controller.getAnimationState(ModAnimations.PLAYING_LUTE).isStarted()) {
@@ -47,9 +59,9 @@ public class ClientEvents {
                     humanoidModel.leftArm.zRot = 0.0F;
                     humanoidModel.rightArm.zRot = 0.0F;
                     if (flag) {
-                        event.animate(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_right, entity.ageInTicks);
+                        rootModel.animateBagu(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_right, event.getAgeInTick());
                     } else {
-                        event.animate(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_left, entity.ageInTicks);
+                        rootModel.animateBagu(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_left, event.getAgeInTick());
                     }
                 }
             }

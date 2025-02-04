@@ -61,9 +61,9 @@ public class AddMusicPacket implements CustomPacketPayload, IPayloadHandler<AddM
             Entity entity = Minecraft.getInstance().player.level().getEntity(message.entityId);
             if (entity != null && entity instanceof Player player) {
                 ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
-                attachment.addMusicList(Champaign.registryAccess().lookupOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(musicSummon), player);
+                attachment.addMusicList(Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(musicSummon), player);
                 if (player == Minecraft.getInstance().player && makeToast) {
-                    Minecraft.getInstance().getToastManager().addToast(new LearningToast(Component.translatable("toast.champaign.learning"), Component.translatable("toast.champaign.learn_entity", musicSummon.entityType().getDescription())));
+                    Minecraft.getInstance().getToasts().addToast(new LearningToast(Component.translatable("toast.champaign.learning"), Component.translatable("toast.champaign.learn_entity", musicSummon.entityType().getDescription())));
                 }
             }
         });

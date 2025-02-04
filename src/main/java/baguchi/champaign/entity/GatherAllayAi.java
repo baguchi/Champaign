@@ -46,7 +46,7 @@ public class GatherAllayAi {
 
     private static void initCoreActivity(Brain<GatherAllay> p_218426_) {
         p_218426_.addActivity(Activity.CORE, 0, ImmutableList.of(
-                new Swim<>(0.8F),
+                new Swim(0.8F),
                 new AnimalPanic<>(2.5F),
                 new LookAtTargetSink(45, 90),
                 new MoveToTargetSink(),

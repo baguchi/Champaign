@@ -3,9 +3,6 @@ package baguchi.champaign.registry;
 import baguchi.champaign.Champaign;
 import baguchi.champaign.entity.GatherAllay;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
@@ -25,8 +22,8 @@ public class ModEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<GatherAllay>> GATHER_ALLAY = ENTITIES_REGISTRY.register("gather_allay", () -> EntityType.Builder.of(GatherAllay::new, MobCategory.CREATURE).sized(0.6F, 0.6F).build(prefix("gather_allay")));
 
-    private static ResourceKey<EntityType<?>> prefix(String path) {
-        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Champaign.MODID, path));
+    private static String prefix(String path) {
+        return Champaign.MODID + "." + path;
     }
 
     @SubscribeEvent

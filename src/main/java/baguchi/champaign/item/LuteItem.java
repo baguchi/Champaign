@@ -1,19 +1,19 @@
 package baguchi.champaign.item;
 
-import baguchi.bagus_lib.util.client.AnimationUtil;
+import bagu_chan.bagus_lib.util.client.AnimationUtil;
 import baguchi.champaign.registry.ModAnimations;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 public class LuteItem extends Item {
@@ -22,8 +22,8 @@ public class LuteItem extends Item {
     }
 
     @Override
-    public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return ItemUseAnimation.BOW;
+    public UseAnim getUseAnimation(ItemStack p_41452_) {
+        return UseAnim.BOW;
     }
 
     @Override
@@ -32,13 +32,13 @@ public class LuteItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         player.startUsingItem(hand);
         if (!level.isClientSide()) {
             AnimationUtil.sendAnimation(player, ModAnimations.PLAYING_LUTE);
         }
-        return InteractionResult.CONSUME;
+        return InteractionResultHolder.consume(itemstack);
     }
 
     @Override

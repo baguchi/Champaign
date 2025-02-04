@@ -1,6 +1,6 @@
 package baguchi.champaign.registry;
 
-import baguchi.bagus_lib.event.RegisterBagusAnimationEvents;
+import bagu_chan.bagus_lib.event.RegisterBagusAnimationEvents;
 import baguchi.champaign.Champaign;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;

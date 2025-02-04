@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
 import net.neoforged.api.distmarker.Dist;
@@ -77,13 +76,13 @@ public class ClientRegistrar {
         if (humanoidarm == HumanoidArm.LEFT) {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            guiGraphics.blitSprite(RenderType::guiTexturedOverlay, ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 22, 22);
+            guiGraphics.blitSprite(ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 22, 22);
             String s = String.valueOf(attachment.getAllayCount());
             guiGraphics.drawString(minecraft.font, s, i - 91 - 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
         } else {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            guiGraphics.blitSprite(RenderType::guiTexturedOverlay, ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 22, 22);
+            guiGraphics.blitSprite(ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 22, 22);
             String s = String.valueOf(attachment.getAllayCount());
             guiGraphics.drawString(minecraft.font, s, i + 91 + 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
 

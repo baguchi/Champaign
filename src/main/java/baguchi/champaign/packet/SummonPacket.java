@@ -1,6 +1,6 @@
 package baguchi.champaign.packet;
 
-import baguchi.bagus_lib.util.client.AnimationUtil;
+import bagu_chan.bagus_lib.util.client.AnimationUtil;
 import baguchi.champaign.Champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.registry.ModAnimations;

@@ -19,8 +19,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
@@ -56,12 +56,12 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         Vec3 pos = hitResult.getLocation();
         if (hitResult.getType() != HitResult.Type.MISS) {
             if (allayCount > 0) {
-                hitResult = BlockHitResult.miss(pos, Direction.getApproximateNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(pos));
+                hitResult = BlockHitResult.miss(pos, Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(pos));
 
                 if (hitResult instanceof BlockHitResult blockHitResult) {
                     BlockPos blockpos = blockHitResult.getBlockPos();
                     if (!serverLevel.isClientSide) {
-                        GatherAllay thrownpotion = ModEntities.GATHER_ALLAY.get().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+                        GatherAllay thrownpotion = ModEntities.GATHER_ALLAY.get().create(serverLevel);
                         thrownpotion.getBrain().setMemory(MemoryModuleType.LIKED_PLAYER, player.getUUID());
                         thrownpotion.setPos(player.position());
                         thrownpotion.getBrain().setMemory(ModMemorys.WORK_POS.get(), GlobalPos.of(serverLevel.dimension(), blockpos));
@@ -124,14 +124,14 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
             int count = countLapis(player);
             if (musicSummon.value().summonCost() <= count || player.isCreative()) {
 
-                Entity entity = getMusicList().get(this.musicIndex).value().getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+                Entity entity = getMusicList().get(this.musicIndex).value().getEntityType().create(serverLevel);
 
                 OwnerAttachment ownerAttachment = entity.getData(ModAttachments.OWNER);
                 ownerAttachment.setOwnerID(player.getUUID());
                 entity.setPos(player.position());
                 if (entity instanceof Mob mob) {
-                    mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null);
-                    mob.dropPreservedEquipment(serverLevel);
+                    mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+                    mob.dropPreservedEquipment();
                 }
                 if (!player.isCreative()) {
                     player.getInventory().clearOrCountMatchingItems(predicate -> {
@@ -213,8 +213,8 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     }
 
     private void trackMusicEntries(ServerPlayer serverPlayer, RegistryAccess registryAccess, AdvancementHolder advancement) {
-        Registry<MusicSummon> musicSummons = registryAccess.lookupOrThrow(MusicSummon.REGISTRY_KEY);
-        for (Holder.Reference<MusicSummon> entry : musicSummons.listElements().toList()) {
+        Registry<MusicSummon> musicSummons = registryAccess.registryOrThrow(MusicSummon.REGISTRY_KEY);
+        for (Holder.Reference<MusicSummon> entry : musicSummons.holders().toList()) {
             if (entry.value().learning_advancement().isPresent() && advancement.id().equals(entry.value().learning_advancement().get()) && !this.musicList.contains(entry)) {
                 this.musicList.add(entry);
                 PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer, entry.value(), true));
@@ -239,7 +239,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
 
         for (int i = 0; i < musicList.size(); i++) {
             CompoundTag compoundTag = new CompoundTag();
-            ResourceLocation resourceLocation = Champaign.registryAccess().lookupOrThrow(MusicSummon.REGISTRY_KEY).getKey(musicList.get(i).value());
+            ResourceLocation resourceLocation = Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).getKey(musicList.get(i).value());
             if (resourceLocation != null) {
                 compoundTag.putString("Music", resourceLocation.toString());
             }
@@ -262,7 +262,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         for (int i = 0; i < list.size(); ++i) {
             CompoundTag compoundnbt = list.getCompound(i);
 
-            Optional<Holder.Reference<MusicSummon>> musicSummon = Champaign.registryAccess().lookupOrThrow(MusicSummon.REGISTRY_KEY).get(ResourceLocation.parse(compoundnbt.getString("Music")));
+            Optional<Holder.Reference<MusicSummon>> musicSummon = Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).getHolder(ResourceLocation.parse(compoundnbt.getString("Music")));
             //check mob enchant is not null
             musicSummon.ifPresent(musicList::add);
         }

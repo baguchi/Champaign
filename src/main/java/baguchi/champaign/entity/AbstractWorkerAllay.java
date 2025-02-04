@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.DebugPackets;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -120,23 +119,33 @@ public abstract class AbstractWorkerAllay extends PathfinderMob implements Inven
 
 
     @Override
-    protected void pickUpItem(ServerLevel p_376246_, ItemEntity p_218359_) {
-        InventoryCarrier.pickUpItem(p_376246_, this, this, p_218359_);
+    protected void pickUpItem(ItemEntity p_218359_) {
+        InventoryCarrier.pickUpItem(this, this, p_218359_);
     }
+
 
     @Override
     public boolean canPickUpLoot() {
         return !this.isOnPickupCooldown();
     }
 
+
     @Override
-    public boolean wantsToPickUp(ServerLevel p_376111_, ItemStack p_218387_) {
+    public boolean wantsToPickUp(ItemStack p_218387_) {
         return this.inventory.canAddItem(p_218387_);
     }
 
     @Override
-    protected boolean considersEntityAsAlly(Entity p_388703_) {
-        return this.isLikedPlayer(p_388703_) || super.considersEntityAsAlly(p_388703_);
+    public boolean hurt(DamageSource p_218339_, float p_218340_) {
+        if (p_218339_.getEntity() instanceof Player player) {
+            Optional<UUID> optional = this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER);
+            if (optional.isPresent() && player.getUUID().equals(optional.get())) {
+                this.returnToPlayer();
+                return false;
+            }
+        }
+
+        return super.hurt(p_218339_, p_218340_);
     }
 
 
@@ -155,29 +164,14 @@ public abstract class AbstractWorkerAllay extends PathfinderMob implements Inven
     }
 
     @Override
-    protected void dropEquipment(ServerLevel p_376761_) {
-        super.dropEquipment(p_376761_);
-        this.inventory.removeAllItems().forEach(p_375836_ -> this.spawnAtLocation(p_376761_, p_375836_));
+    protected void dropEquipment() {
+        super.dropEquipment();
+        this.inventory.removeAllItems().forEach(p_375836_ -> this.spawnAtLocation(p_375836_));
         ItemStack itemstack = this.getItemBySlot(EquipmentSlot.MAINHAND);
         if (!itemstack.isEmpty() && !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
-            this.spawnAtLocation(p_376761_, itemstack);
+            this.spawnAtLocation(itemstack);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
-    }
-
-
-    @Override
-    public boolean hurtServer(ServerLevel p_376761_, DamageSource p_218339_, float p_218340_) {
-        Entity $$3 = p_218339_.getEntity();
-        if ($$3 instanceof Player player) {
-            Optional<UUID> optional = this.getBrain().getMemory(MemoryModuleType.LIKED_PLAYER);
-            if (optional.isPresent() && player.getUUID().equals(optional.get())) {
-                this.returnToPlayer();
-                return false;
-            }
-        }
-
-        return super.hurtServer(p_376761_, p_218339_, p_218340_);
     }
 
     @Override

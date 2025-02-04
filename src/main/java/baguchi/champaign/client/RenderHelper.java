@@ -10,13 +10,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +30,7 @@ public class RenderHelper {
 
     private static void renderSlot(GuiGraphics graphics, int pX, int pY, MusicSummon musicSummon) {
         if (musicSummon != null) {
-            Entity entity = musicSummon.getEntityType().create(Minecraft.getInstance().level, EntitySpawnReason.MOB_SUMMONED);
+            Entity entity = musicSummon.getEntityType().create(Minecraft.getInstance().level);
             if (entity instanceof LivingEntity livingEntity) {
                 graphics.pose().pushPose();
 
@@ -72,16 +70,16 @@ public class RenderHelper {
                 int jx = px - 10 - i * 20;
                 if (!list.isEmpty() && list.size() > i) {
                     renderSlot(graphics, jx, py, list.get(i).value());
-                    graphics.blitSprite(RenderType::guiTextured, TEXTURE, jx, py, 22, 22);
+                    graphics.blitSprite(TEXTURE, jx, py, 22, 22);
 
                 } else {
                     renderSlot(graphics, jx, py, null);
-                    graphics.blitSprite(RenderType::guiTextured, TEXTURE, jx, py, 22, 22);
+                    graphics.blitSprite(TEXTURE, jx, py, 22, 22);
                 }
             }
             if (selected < slots) {
                 int jx = px - 10 - selected * 20;
-                graphics.blitSprite(RenderType::guiTextured, TEXTURE_SELECT, jx - 1, py - 1, 24, 24);
+                graphics.blitSprite(TEXTURE_SELECT, jx - 1, py - 1, 24, 24);
             }
 
 

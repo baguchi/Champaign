@@ -1,11 +1,9 @@
 package baguchi.champaign.client.render.toast;
 
 import baguchi.champaign.registry.ModItems;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.Toast;
-import net.minecraft.client.gui.components.toasts.ToastManager;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -31,48 +29,38 @@ public class LearningToast implements Toast {
     }
 
     @Override
-    public Visibility getWantedVisibility() {
-        return this.wantedVisibility;
-    }
+    public Toast.Visibility render(GuiGraphics p_281813_, ToastComponent p_282243_, long p_282604_) {
+        p_281813_.blitSprite(BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
 
-    @Override
-    public void update(ToastManager p_363415_, long p_363939_) {
-        if (!this.playedSound && p_363939_ > 0L) {
-            this.playedSound = true;
-            p_363415_.getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0F, 1.0F));
-
-        }
-
-        this.wantedVisibility = (double) p_363939_ >= 5000.0 * p_363415_.getNotificationDisplayTimeMultiplier()
-                ? Toast.Visibility.HIDE
-                : Toast.Visibility.SHOW;
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, Font font, long timeSinceLastVisible) {
-        guiGraphics.blitSprite(RenderType::guiTextured, BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
-        List<FormattedCharSequence> list = font.split(this.description, 125);
-        int i = 16776960;
+        List<FormattedCharSequence> list = p_282243_.getMinecraft().font.split(title, 125);
+        int i = 16746751;
         if (list.size() == 1) {
-            guiGraphics.drawString(font, this.title, 32, 7, -13423317, false);
-            guiGraphics.drawString(font, this.description, 32, 18, -724497, false);
+            p_281813_.drawString(p_282243_.getMinecraft().font, description, 30, 7, i | 0xFF000000, false);
+            p_281813_.drawString(p_282243_.getMinecraft().font, list.get(0), 30, 18, -1, false);
         } else {
             int j = 1500;
             float f = 300.0F;
-            if (timeSinceLastVisible < 1500L) {
-                int k = Mth.floor(Mth.clamp((float) (1500L - timeSinceLastVisible) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 67108864;
-                guiGraphics.drawString(font, this.title, 30, 11, i | k, false);
+            if (p_282604_ < 1500L) {
+                int k = Mth.floor(Mth.clamp((float) (1500L - p_282604_) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 67108864;
+                p_281813_.drawString(p_282243_.getMinecraft().font, description, 30, 11, i | k, false);
             } else {
-                int i1 = Mth.floor(Mth.clamp((float) (timeSinceLastVisible - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 67108864;
+                int i1 = Mth.floor(Mth.clamp((float) (p_282604_ - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 67108864;
                 int l = this.height() / 2 - list.size() * 9 / 2;
 
                 for (FormattedCharSequence formattedcharsequence : list) {
-                    guiGraphics.drawString(font, formattedcharsequence, 30, l, 16777215 | i1, false);
+                    p_281813_.drawString(p_282243_.getMinecraft().font, formattedcharsequence, 30, l, 16777215 | i1, false);
                     l += 9;
+                }
                 }
             }
 
-            guiGraphics.renderFakeItem(ModItems.LUTE.get().getDefaultInstance(), 8, 8);
+        if (!this.playedSound && p_282604_ > 0L) {
+            this.playedSound = true;
+            p_282243_.getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1.0F, 1.0F));
+
         }
+
+        p_281813_.renderFakeItem(ModItems.MUSIC_PATTERN.toStack(), 8, 8);
+        return (double) p_282604_ >= 5000.0 * p_282243_.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
 }

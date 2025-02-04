@@ -23,9 +23,9 @@ public class ModCreativeTabs {
 
     public static List<ItemStack> generateMusic() {
         List<ItemStack> items = Lists.newArrayList();
-        for (MusicSummon musicSummon : Champaign.registryAccess().lookupOrThrow(MusicSummon.REGISTRY_KEY)) {
+        for (MusicSummon musicSummon : Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY)) {
             ItemStack stack = new ItemStack(ModItems.MUSIC_PATTERN.get());
-            stack.set(ModDataComponents.MUSIC_TYPE, Champaign.registryAccess().lookupOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(musicSummon));
+            stack.set(ModDataComponents.MUSIC_TYPE, Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(musicSummon));
             items.add(stack);
         }
         return items;

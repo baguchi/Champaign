@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +26,7 @@ public class MusicPatternItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (itemstack.has(ModDataComponents.MUSIC_TYPE)) {
             if (!level.isClientSide) {
@@ -39,7 +39,7 @@ public class MusicPatternItem extends Item {
             player.awardStat(Stats.ITEM_USED.get(this));
             player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE);
             itemstack.consume(1, player);
-            return InteractionResult.SUCCESS;
+            return InteractionResultHolder.success(itemstack);
         }
         return super.use(level, player, hand);
     }
