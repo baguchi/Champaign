@@ -3,6 +3,7 @@ package baguchi.champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.attachment.OwnerAttachment;
 import baguchi.champaign.packet.AddMusicPacket;
+import baguchi.champaign.packet.SyncAllayPacket;
 import baguchi.champaign.registry.ModAttachments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -73,6 +74,8 @@ public class CommonEvents {
             attachment.getMusicList().forEach(musicSummon -> {
                 PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value(), false));
             });
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getAllayCount(), attachment.getMaxAllayCount()));
+
         }
     }
 
@@ -84,6 +87,8 @@ public class CommonEvents {
             attachment.getMusicList().forEach(musicSummon -> {
                 PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value(), false));
             });
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getAllayCount(), attachment.getMaxAllayCount()));
+
         }
     }
 
@@ -95,6 +100,9 @@ public class CommonEvents {
             attachment.getMusicList().forEach(musicSummon -> {
                 PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer.getId(), musicSummon.value(), false));
             });
+
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(serverPlayer.getId(), attachment.getAllayCount(), attachment.getMaxAllayCount()));
+
         }
     }
 }

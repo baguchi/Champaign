@@ -3,7 +3,6 @@ package baguchi.champaign.client;
 import baguchi.bagus_lib.animation.BaguAnimationController;
 import baguchi.bagus_lib.client.event.BagusModelEvent;
 import baguchi.champaign.Champaign;
-import baguchi.champaign.ChampaignConfig;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.client.animation.LuteAnimation;
 import baguchi.champaign.packet.CallPacket;
@@ -86,7 +85,7 @@ public class ClientEvents {
             }
         }
 
-        if (Minecraft.getInstance().player != null && ChampaignConfig.COMMON.enableCampaign.get() && Minecraft.getInstance().player.isHolding(ModItems.LUTE.get())) {
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isHolding(ModItems.LUTE.get())) {
 
             if (ModKeyMappings.KEY_SUMMON_ALLAY.isDown()) {
                 if (pressSummonTick <= 0) {

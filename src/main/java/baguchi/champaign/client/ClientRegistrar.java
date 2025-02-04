@@ -2,7 +2,6 @@ package baguchi.champaign.client;
 
 
 import baguchi.champaign.Champaign;
-import baguchi.champaign.ChampaignConfig;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.client.render.GatherAllayRenderer;
 import baguchi.champaign.registry.ModAttachments;
@@ -59,7 +58,7 @@ public class ClientRegistrar {
             Minecraft minecraft = Minecraft.getInstance();
             Window window = minecraft.getWindow();
             LocalPlayer player = minecraft.player;
-            if (player != null && ChampaignConfig.COMMON.enableCampaign.get()) {
+            if (player != null) {
                 renderAllayOverlay(guiGraphics, minecraft, player.getData(ModAttachments.CHAMPAIGN), partialTicks);
             }
         });
