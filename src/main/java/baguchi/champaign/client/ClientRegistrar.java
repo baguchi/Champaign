@@ -11,6 +11,7 @@ import baguchi.champaign.registry.ModKeyMappings;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
@@ -57,8 +58,9 @@ public class ClientRegistrar {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "allay"), (guiGraphics, partialTicks) -> {
             Minecraft minecraft = Minecraft.getInstance();
             Window window = minecraft.getWindow();
+            Options options = minecraft.options;
             LocalPlayer player = minecraft.player;
-            if (player != null) {
+            if (player != null && !options.hideGui) {
                 renderAllayOverlay(guiGraphics, minecraft, player.getData(ModAttachments.CHAMPAIGN), partialTicks);
             }
         });
