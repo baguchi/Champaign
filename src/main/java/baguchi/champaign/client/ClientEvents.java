@@ -3,9 +3,12 @@ package baguchi.champaign.client;
 import baguchi.bagus_lib.animation.BaguAnimationController;
 import baguchi.bagus_lib.client.event.BagusModelEvent;
 import baguchi.champaign.Champaign;
+import baguchi.champaign.ChampaignConfig;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.client.animation.LuteAnimation;
+import baguchi.champaign.packet.CallPacket;
 import baguchi.champaign.packet.ChangeMusicSlotPacket;
+import baguchi.champaign.packet.SummonAllayPacket;
 import baguchi.champaign.packet.SummonPacket;
 import baguchi.champaign.registry.ModAnimations;
 import baguchi.champaign.registry.ModAttachments;
@@ -79,6 +82,23 @@ public class ClientEvents {
                 if (pressSummonTick <= 0) {
                     pressSummonTick = 20;
                     PacketDistributor.sendToServer(new SummonPacket());
+                }
+            }
+        }
+
+        if (Minecraft.getInstance().player != null && ChampaignConfig.COMMON.enableCampaign.get() && Minecraft.getInstance().player.isHolding(ModItems.LUTE.get())) {
+
+            if (ModKeyMappings.KEY_SUMMON_ALLAY.isDown()) {
+                if (pressSummonTick <= 0) {
+                    pressSummonTick = 20;
+                    PacketDistributor.sendToServer(new SummonAllayPacket());
+                }
+            }
+
+            if (ModKeyMappings.KEY_CALL_ALLAY.isDown()) {
+                if (pressSummonTick <= 0) {
+                    pressSummonTick = 20;
+                    PacketDistributor.sendToServer(new CallPacket());
                 }
             }
         }

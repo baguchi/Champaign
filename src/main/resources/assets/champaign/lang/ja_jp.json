@@ -1,6 +1,7 @@
 {
   "key.champaign.summon": "召喚",
-  "key.champaign.change_music": "音楽を変える",
+  "key.champaign.summon_allay": "収集アレイ召喚",
+  "key.champaign.call_allay": "収集アレイを呼ぶ",
   "key.categories.champaign": "キャンペーン",
   "block.champaign.music_table": "楽譜台",
   "item.champaign.music_pattern": "楽譜",
@@ -9,5 +10,8 @@
   "item.champaign.lute.tooltip.description1": "モブを召喚",
   "item.champaign.lute.tooltip.description2": "音楽を変える",
   "toast.champaign.learn_entity": "あなたは、%sの音楽を覚えた",
-  "toast.champaign.learning": "音楽を習得！"
+  "item.champaign.lute.tooltip.description3": "収集アレイ召喚",
+  "item.champaign.lute.tooltip.description4": "収集アレイを呼ぶ",
+  "toast.champaign.learning": "音楽を習得！",
+  "campaign.config.enable_campaign": "キャンペーンモードを有効化"
 }

@@ -1,6 +1,7 @@
 {
   "key.champaign.summon": "Summon",
-  "key.champaign.change_music": "Change Music Slot",
+  "key.champaign.summon_allay": "Summon Allay",
+  "key.champaign.call_allay": "Call Allay",
   "key.categories.champaign": "Champaign",
   "block.champaign.music_table": "Music Table",
   "item.champaign.music_pattern": "Music Pattern",
@@ -8,6 +9,9 @@
   "container.champaign.music_table": "Music Table",
   "item.champaign.lute.tooltip.description1": "Summon Mob",
   "item.champaign.lute.tooltip.description2": "Change Music",
+  "item.champaign.lute.tooltip.description3": "Summon Allay",
+  "item.champaign.lute.tooltip.description4": "Call Allay",
   "toast.champaign.learn_entity": "You Learned %s",
-  "toast.champaign.learning": "You Learned Music!"
+  "toast.champaign.learning": "You Learned Music!",
+  "campaign.config.enable_campaign": "Enable Campaign Mode"
 }

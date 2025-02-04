@@ -20,6 +20,7 @@ public class ChampaignConfig {
         public Common(ModConfigSpec.Builder builder) {
             enableCampaign = builder
                     .comment("Enable The Campaign GamePlay. less power and less mining speed. but allay you have")
+                    .translation(Champaign.MODID + ".config.enable_campaign")
                     .define("Enable Campaign", true);
         }
     }

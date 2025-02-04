@@ -2,13 +2,12 @@ package baguchi.champaign;
 
 
 import baguchi.champaign.music.MusicSummon;
-import baguchi.champaign.packet.AddMusicPacket;
-import baguchi.champaign.packet.ChangeMusicSlotPacket;
-import baguchi.champaign.packet.SummonPacket;
+import baguchi.champaign.packet.*;
 import baguchi.champaign.registry.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -16,6 +15,8 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.util.thread.EffectiveSide;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -33,10 +34,12 @@ public class Champaign
     public static final String MODID = "champaign";
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
-    public Champaign(IEventBus modEventBus, ModContainer modContainer)
+    public Champaign(IEventBus modEventBus, Dist dist, ModContainer modContainer)
     {
         // Register the commonSetup method for modloading
-
+        if (dist.isClient()) {
+            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        }
         NeoForge.EVENT_BUS.register(this);
         ModMusicSummons.MUSIC_SUMMON.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
@@ -70,8 +73,11 @@ public class Champaign
     public void setupPackets(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(MODID).versioned("1.0.0").optional();
         registrar.playBidirectional(SummonPacket.TYPE, SummonPacket.STREAM_CODEC, (handler, payload) -> handler.handle(handler, payload));
+        registrar.playBidirectional(SummonAllayPacket.TYPE, SummonAllayPacket.STREAM_CODEC, (handler, payload) -> handler.handle(handler, payload));
         registrar.playBidirectional(ChangeMusicSlotPacket.TYPE, ChangeMusicSlotPacket.STREAM_CODEC, (handler, payload) -> handler.handle(handler, payload));
         registrar.playBidirectional(AddMusicPacket.TYPE, AddMusicPacket.STREAM_CODEC, (handler, payload) -> handler.handle(handler, payload));
+        registrar.playBidirectional(CallPacket.TYPE, CallPacket.STREAM_CODEC, (handler, payload) -> handler.handle(handler, payload));
+        registrar.playBidirectional(SyncAllayPacket.TYPE, SyncAllayPacket.STREAM_CODEC, (handler, payload) -> handler.handle(handler, payload));
     }
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent

@@ -1,14 +1,16 @@
 package baguchi.champaign.attachment;
 
 import baguchi.champaign.Champaign;
+import baguchi.champaign.entity.AbstractWorkerAllay;
+import baguchi.champaign.entity.GatherAllay;
 import baguchi.champaign.music.MusicSummon;
 import baguchi.champaign.packet.AddMusicPacket;
+import baguchi.champaign.packet.SyncAllayPacket;
 import baguchi.champaign.registry.ModAttachments;
+import baguchi.champaign.registry.ModEntities;
+import baguchi.champaign.registry.ModMemorys;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +21,15 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.compress.utils.Lists;
@@ -33,7 +41,81 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     private final List<Holder<MusicSummon>> musicList = Lists.newArrayList();
     private int musicIndex;
     private boolean sync;
+    private int allayCount = 3;
+    private int maxAllayCount = 3;
 
+    public void summonAllay(ServerPlayer player) {
+        Vec3 vec3 = player.getEyePosition();
+        Vec3 vec31 = player.getViewVector(1.0F);
+        double d0 = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        Vec3 vec32 = vec3.add(vec31.x * d0, vec31.y * d0, vec31.z * d0);
+        ServerLevel serverLevel = player.serverLevel();
+
+        HitResult hitResult = player.pick(20.0D, 0.0F, false);
+
+        Vec3 pos = hitResult.getLocation();
+        if (hitResult.getType() != HitResult.Type.MISS) {
+            if (allayCount > 0) {
+                hitResult = BlockHitResult.miss(pos, Direction.getApproximateNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(pos));
+
+                if (hitResult instanceof BlockHitResult blockHitResult) {
+                    BlockPos blockpos = blockHitResult.getBlockPos();
+                    if (!serverLevel.isClientSide) {
+                        GatherAllay thrownpotion = ModEntities.GATHER_ALLAY.get().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+                        thrownpotion.getBrain().setMemory(MemoryModuleType.LIKED_PLAYER, player.getUUID());
+                        thrownpotion.setPos(player.position());
+                        thrownpotion.getBrain().setMemory(ModMemorys.WORK_POS.get(), GlobalPos.of(serverLevel.dimension(), blockpos));
+                        serverLevel.addFreshEntity(thrownpotion);
+                    }
+
+                    this.setAllayCount(this.getAllayCount() - 1, player);
+                    player.playSound(SoundEvents.ALLAY_ITEM_GIVEN);
+                }
+            }
+        }
+    }
+
+    public void callAllay(ServerPlayer player) {
+        Vec3 vec3 = player.getEyePosition();
+        Vec3 vec31 = player.getViewVector(1.0F);
+        double d0 = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        Vec3 vec32 = vec3.add(vec31.x * d0, vec31.y * d0, vec31.z * d0);
+        ServerLevel serverLevel = player.serverLevel();
+
+        HitResult hitResult = player.pick(20.0D, 0.0F, false);
+
+        Vec3 pos = hitResult.getLocation();
+
+        List<AbstractWorkerAllay> list = serverLevel.getEntitiesOfClass(AbstractWorkerAllay.class, new AABB(new BlockPos((int) pos.x, (int) pos.y, (int) pos.z)).inflate(8.0F), predicate -> {
+            return predicate.isReturnOwner(player);
+        });
+
+        list.forEach(allay -> {
+            allay.getBrain().eraseMemory(ModMemorys.WORK_POS.get());
+        });
+    }
+
+    public void setAllayCount(int allayCount, Player player) {
+        this.allayCount = allayCount;
+        if (player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
+        }
+    }
+
+    public int getAllayCount() {
+        return allayCount;
+    }
+
+    public int getMaxAllayCount() {
+        return maxAllayCount;
+    }
+
+    public void setMaxAllayCount(int maxAllayCount, Player player) {
+        this.maxAllayCount = maxAllayCount;
+        if (player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
+        }
+    }
 
     public void summonEntity(ServerPlayer player) {
         ServerLevel serverLevel = player.serverLevel();
@@ -165,13 +247,16 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         }
 
         nbt.put("LearnedEntity", listnbt);
+        nbt.putInt("AllayCount", this.allayCount);
+        nbt.putInt("MaxAllayCount", this.maxAllayCount);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
         ListTag list = nbt.contains("LearnedEntity") ? nbt.getList("LearnedEntity", 10) : new ListTag();
-
+        this.allayCount = nbt.getInt("AllayCount");
+        this.maxAllayCount = nbt.getInt("MaxAllayCount");
 
         musicList.clear();
         for (int i = 0; i < list.size(); ++i) {

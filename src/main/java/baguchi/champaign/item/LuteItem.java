@@ -60,5 +60,13 @@ public class LuteItem extends Item {
         tooltip.add(Component.translatable("item.champaign.lute.tooltip.description1").withStyle(ChatFormatting.DARK_AQUA));
         tooltip.add(Component.literal("[").append(useKey).append("] :").withStyle(ChatFormatting.DARK_AQUA));
         tooltip.add(Component.translatable("item.champaign.lute.tooltip.description2").withStyle(ChatFormatting.DARK_AQUA));
+
+        Component summonAllayKey = ModKeyMappings.KEY_SUMMON_ALLAY.getTranslatedKeyMessage();
+        Component callAllayKey = ModKeyMappings.KEY_CALL_ALLAY.getTranslatedKeyMessage();
+        tooltip.add(Component.literal("[").append(summonAllayKey).append("] :").withStyle(ChatFormatting.DARK_AQUA));
+        tooltip.add(Component.translatable("item.champaign.lute.tooltip.description3").withStyle(ChatFormatting.DARK_AQUA));
+        tooltip.add(Component.literal("[").append(callAllayKey).append("] :").withStyle(ChatFormatting.DARK_AQUA));
+        tooltip.add(Component.translatable("item.champaign.lute.tooltip.description4").withStyle(ChatFormatting.DARK_AQUA));
+
     }
 }
