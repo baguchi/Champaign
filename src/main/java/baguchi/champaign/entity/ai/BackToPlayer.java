@@ -1,8 +1,8 @@
 package baguchi.champaign.entity.ai;
 
+import baguchi.champaign.Champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.entity.AbstractWorkerAllay;
-import baguchi.champaign.registry.ModAttachments;
 import baguchi.champaign.registry.ModMemorys;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
@@ -52,7 +52,7 @@ public class BackToPlayer extends Behavior<baguchi.champaign.entity.AbstractWork
             Entity entity = level.getEntity(uuid.get());
             if (entity instanceof ServerPlayer serverPlayer) {
                 if (serverPlayer.distanceTo(mob) < 1.5F) {
-                    ChampaignAttachment attachment = serverPlayer.getData(ModAttachments.CHAMPAIGN);
+                    ChampaignAttachment attachment = serverPlayer.getCapability(Champaign.CHAMPAIGN_CAPABILITY).orElse(new ChampaignAttachment());
                     attachment.setAllayCount(attachment.getAllayCount() + 1, serverPlayer);
                     mob.giveResource();
                     mob.discard();

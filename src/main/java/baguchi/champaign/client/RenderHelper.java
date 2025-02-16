@@ -3,7 +3,6 @@ package baguchi.champaign.client;
 import baguchi.champaign.Champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.music.MusicSummon;
-import baguchi.champaign.registry.ModAttachments;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -24,8 +23,8 @@ import java.util.List;
 public class RenderHelper {
     private static Gui ingameGui;
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "hud/hotbar");
-    private static final ResourceLocation TEXTURE_SELECT = ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "hud/hotbar_select");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Champaign.MODID, "gui/sprites/hud/hotbar");
+    private static final ResourceLocation TEXTURE_SELECT = new ResourceLocation(Champaign.MODID, "gui/sprites/hud/hotbar_select");
 
 
     private static void renderSlot(GuiGraphics graphics, int pX, int pY, MusicSummon musicSummon) {
@@ -34,7 +33,7 @@ public class RenderHelper {
             if (entity instanceof LivingEntity livingEntity) {
                 graphics.pose().pushPose();
 
-                InventoryScreen.renderEntityInInventoryFollowsAngle(graphics, pX + 2, pY + 2, pX + 19, pY + 19, 25, 0.0625F, 0F, 0F, livingEntity);
+                InventoryScreen.renderEntityInInventoryFollowsAngle(graphics, pX + 2, pY + 2, pX + 19, pY + 19, 25, livingEntity);
 
                 graphics.pose().popPose();
                 graphics.pose().pushPose();
@@ -51,7 +50,7 @@ public class RenderHelper {
     public static void renderEntityContent(GuiGraphics graphics, int screenWidth, int screenHeight) {
 
         if (Minecraft.getInstance().getCameraEntity() instanceof Player player) {
-            ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
+            ChampaignAttachment attachment = player.getCapability(Champaign.CHAMPAIGN_CAPABILITY).orElse(new ChampaignAttachment());
             ///gui.setupOverlayRenderState(true, false);
             PoseStack poseStack = graphics.pose();
             poseStack.pushPose();
@@ -70,16 +69,16 @@ public class RenderHelper {
                 int jx = px - 10 - i * 20;
                 if (!list.isEmpty() && list.size() > i) {
                     renderSlot(graphics, jx, py, list.get(i).value());
-                    graphics.blitSprite(TEXTURE, jx, py, 22, 22);
+                    graphics.blit(TEXTURE, jx, py, 0, 0, 22, 22);
 
                 } else {
                     renderSlot(graphics, jx, py, null);
-                    graphics.blitSprite(TEXTURE, jx, py, 22, 22);
+                    graphics.blit(TEXTURE, jx, py, 0, 0, 22, 22);
                 }
             }
             if (selected < slots) {
                 int jx = px - 10 - selected * 20;
-                graphics.blitSprite(TEXTURE_SELECT, jx - 1, py - 1, 24, 24);
+                graphics.blit(TEXTURE_SELECT, jx - 1, py - 1, 0, 0, 24, 24);
             }
 
 

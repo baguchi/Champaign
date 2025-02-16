@@ -4,31 +4,29 @@ package baguchi.champaign.client;
 import baguchi.champaign.Champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.client.render.GatherAllayRenderer;
-import baguchi.champaign.registry.ModAttachments;
 import baguchi.champaign.registry.ModEntities;
 import baguchi.champaign.registry.ModItems;
 import baguchi.champaign.registry.ModKeyMappings;
 import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.HumanoidArm;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Champaign.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Champaign.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistrar {
 
-    private static final ResourceLocation ALLAY_GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "allay_hotbar");
+    private static final ResourceLocation ALLAY_GUI_TEXTURE = new ResourceLocation(Champaign.MODID, "gui/sprites/allay_hotbar.png");
 
 
     @SubscribeEvent
@@ -44,8 +42,8 @@ public class ClientRegistrar {
     }
 
     @SubscribeEvent
-    public static void registerOverlay(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "entity_slot"), (guiGraphics, partialTicks) -> {
+    public static void registerOverlay(RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll("entity_slot", (gui, guiGraphics, tick, wight, height) -> {
             Minecraft minecraft = Minecraft.getInstance();
             Window window = minecraft.getWindow();
             LocalPlayer player = minecraft.player;
@@ -54,19 +52,19 @@ public class ClientRegistrar {
             }
         });
 
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "allay"), (guiGraphics, partialTicks) -> {
+        event.registerAboveAll("allay", (gui, guiGraphics, tick, wight, height) -> {
             Minecraft minecraft = Minecraft.getInstance();
             Window window = minecraft.getWindow();
             Options options = minecraft.options;
             LocalPlayer player = minecraft.player;
             if (player != null && !options.hideGui) {
-                renderAllayOverlay(guiGraphics, minecraft, player.getData(ModAttachments.CHAMPAIGN), partialTicks);
+                renderAllayOverlay(guiGraphics, minecraft, player.getCapability(Champaign.CHAMPAIGN_CAPABILITY).orElse(new ChampaignAttachment()), tick);
             }
         });
     }
 
 
-    private static void renderAllayOverlay(GuiGraphics guiGraphics, Minecraft minecraft, ChampaignAttachment attachment, DeltaTracker partialTicks) {
+    private static void renderAllayOverlay(GuiGraphics guiGraphics, Minecraft minecraft, ChampaignAttachment attachment, float partialTicks) {
         int x = guiGraphics.guiHeight();
         int y = guiGraphics.guiWidth();
         int i = guiGraphics.guiWidth() / 2;
@@ -76,13 +74,13 @@ public class ClientRegistrar {
         if (humanoidarm == HumanoidArm.LEFT) {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            guiGraphics.blitSprite(ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 22, 22);
+            guiGraphics.blit(ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 0, 0, 22, 22);
             String s = String.valueOf(attachment.getAllayCount());
             guiGraphics.drawString(minecraft.font, s, i - 91 - 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
         } else {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            guiGraphics.blitSprite(ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 22, 22);
+            guiGraphics.blit(ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 0, 0, 22, 22);
             String s = String.valueOf(attachment.getAllayCount());
             guiGraphics.drawString(minecraft.font, s, i + 91 + 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
 

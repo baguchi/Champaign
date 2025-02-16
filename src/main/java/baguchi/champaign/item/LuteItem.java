@@ -1,7 +1,5 @@
 package baguchi.champaign.item;
 
-import bagu_chan.bagus_lib.util.client.AnimationUtil;
-import baguchi.champaign.registry.ModAnimations;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -15,6 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class LuteItem extends Item {
     public LuteItem(Item.Properties properties) {
@@ -26,8 +27,9 @@ public class LuteItem extends Item {
         return UseAnim.BOW;
     }
 
+
     @Override
-    public int getUseDuration(ItemStack stack, LivingEntity p_346168_) {
+    public int getUseDuration(ItemStack p_41454_) {
         return 72000;
     }
 
@@ -35,23 +37,23 @@ public class LuteItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         player.startUsingItem(hand);
-        if (!level.isClientSide()) {
+        /*if (!level.isClientSide()) {
             AnimationUtil.sendAnimation(player, ModAnimations.PLAYING_LUTE);
-        }
+        }*/
         return InteractionResultHolder.consume(itemstack);
     }
 
     @Override
     public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
         super.onStopUsing(stack, entity, count);
-        if (!entity.level().isClientSide()) {
+        /*if (!entity.level().isClientSide()) {
             AnimationUtil.sendStopAnimation(entity, ModAnimations.PLAYING_LUTE);
-        }
+        }*/
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, java.util.List<net.minecraft.network.chat.Component> tooltip, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltip, tooltipFlag);
+    public void appendHoverText(ItemStack stack, @Nullable Level p_41422_, List<Component> tooltip, TooltipFlag p_41424_) {
+        super.appendHoverText(stack, p_41422_, tooltip, p_41424_);
         Minecraft instance = Minecraft.getInstance();
         //操作キーを取得
         Component useKey = instance.options.keyUse.getTranslatedKeyMessage();

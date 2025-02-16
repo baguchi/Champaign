@@ -6,22 +6,22 @@ import baguchi.champaign.entity.GatherAllay;
 import baguchi.champaign.music.MusicSummon;
 import baguchi.champaign.packet.AddMusicPacket;
 import baguchi.champaign.packet.SyncAllayPacket;
-import baguchi.champaign.registry.ModAttachments;
 import baguchi.champaign.registry.ModEntities;
 import baguchi.champaign.registry.ModMemorys;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -30,14 +30,20 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.compress.utils.Lists;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
+public class ChampaignAttachment implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
     private final List<Holder<MusicSummon>> musicList = Lists.newArrayList();
     private int musicIndex;
     private boolean sync;
@@ -47,7 +53,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     public void summonAllay(ServerPlayer player) {
         Vec3 vec3 = player.getEyePosition();
         Vec3 vec31 = player.getViewVector(1.0F);
-        double d0 = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        double d0 = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
         Vec3 vec32 = vec3.add(vec31.x * d0, vec31.y * d0, vec31.z * d0);
         ServerLevel serverLevel = player.serverLevel();
 
@@ -78,7 +84,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     public void callAllay(ServerPlayer player) {
         Vec3 vec3 = player.getEyePosition();
         Vec3 vec31 = player.getViewVector(1.0F);
-        double d0 = player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+        double d0 = player.getAttributeValue(ForgeMod.ENTITY_REACH.get());
         Vec3 vec32 = vec3.add(vec31.x * d0, vec31.y * d0, vec31.z * d0);
         ServerLevel serverLevel = player.serverLevel();
 
@@ -98,7 +104,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     public void setAllayCount(int allayCount, Player player) {
         this.allayCount = allayCount;
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
+            Champaign.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
         }
     }
 
@@ -113,7 +119,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     public void setMaxAllayCount(int maxAllayCount, Player player) {
         this.maxAllayCount = maxAllayCount;
         if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
+            Champaign.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncAllayPacket(player.getId(), this.allayCount, this.maxAllayCount));
         }
     }
 
@@ -126,12 +132,14 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
 
                 Entity entity = getMusicList().get(this.musicIndex).value().getEntityType().create(serverLevel);
 
-                OwnerAttachment ownerAttachment = entity.getData(ModAttachments.OWNER);
+                OwnerAttachment ownerAttachment = entity.getCapability(Champaign.OWNER_CAPABILITY).orElse(new OwnerAttachment());
                 ownerAttachment.setOwnerID(player.getUUID());
                 entity.setPos(player.position());
                 if (entity instanceof Mob mob) {
-                    mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
-                    mob.dropPreservedEquipment();
+                    mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null, null);
+                    for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
+                        mob.setDropChance(equipmentslot, 0.0F);
+                    }
                 }
                 if (!player.isCreative()) {
                     player.getInventory().clearOrCountMatchingItems(predicate -> {
@@ -196,14 +204,14 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
 
     public void addMusicList(Holder<MusicSummon> music, Player player) {
         this.musicList.add(music);
-        if (!player.level().isClientSide()) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new AddMusicPacket(player, music.value(), true));
+        if (!player.level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            Champaign.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new AddMusicPacket(player, music.value(), true));
         }
     }
 
-    public void trackDiscoveries(Player player, AdvancementHolder advancement) {
+    public void trackDiscoveries(Player player, Advancement advancement) {
         if (player instanceof ServerPlayer serverPlayer) {
-            RegistryAccess registryAccess = serverPlayer.registryAccess();
+            RegistryAccess registryAccess = serverPlayer.serverLevel().registryAccess();
             this.trackMusicEntries(serverPlayer, registryAccess, advancement);
             if (this.sync) {
 
@@ -212,18 +220,13 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         }
     }
 
-    private void trackMusicEntries(ServerPlayer serverPlayer, RegistryAccess registryAccess, AdvancementHolder advancement) {
+    private void trackMusicEntries(ServerPlayer serverPlayer, RegistryAccess registryAccess, Advancement advancement) {
         Registry<MusicSummon> musicSummons = registryAccess.registryOrThrow(MusicSummon.REGISTRY_KEY);
         for (Holder.Reference<MusicSummon> entry : musicSummons.holders().toList()) {
-            if (entry.value().learning_advancement().isPresent() && advancement.id().equals(entry.value().learning_advancement().get()) && !this.musicList.contains(entry)) {
+            if (entry.value().learning_advancement().isPresent() && advancement.getId().equals(entry.value().learning_advancement().get()) && !this.musicList.contains(entry)) {
                 this.musicList.add(entry);
-                PacketDistributor.sendToPlayer(serverPlayer, new AddMusicPacket(serverPlayer, entry.value(), true));
-
-                this.sync = true;
+                Champaign.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new AddMusicPacket(serverPlayer, entry.value(), true));
             }
-        }
-        if (this.sync) {
-            //PacketDistributor.sendToPlayer(serverPlayer, new GuidebookToastPacket(GuidebookToast.Icons.BESTIARY, "gui.aether_ii.toast.guidebook.bestiary", "gui.aether_ii.toast.guidebook.description"));
         }
     }
 
@@ -231,8 +234,13 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         return musicList;
     }
 
+    @Nonnull
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+        return (capability == Champaign.CHAMPAIGN_CAPABILITY) ? LazyOptional.of(() -> this).cast() : LazyOptional.empty();
+    }
+
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
 
         ListTag listnbt = new ListTag();
@@ -253,7 +261,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         ListTag list = nbt.contains("LearnedEntity") ? nbt.getList("LearnedEntity", 10) : new ListTag();
         this.allayCount = nbt.getInt("AllayCount");
         this.maxAllayCount = nbt.getInt("MaxAllayCount");
@@ -262,7 +270,7 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
         for (int i = 0; i < list.size(); ++i) {
             CompoundTag compoundnbt = list.getCompound(i);
 
-            Optional<Holder.Reference<MusicSummon>> musicSummon = Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).getHolder(ResourceLocation.parse(compoundnbt.getString("Music")));
+            Optional<Holder.Reference<MusicSummon>> musicSummon = Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).getHolder(ResourceKey.create(MusicSummon.REGISTRY_KEY, ResourceLocation.tryParse(compoundnbt.getString("Music"))));
             //check mob enchant is not null
             musicSummon.ifPresent(musicList::add);
         }

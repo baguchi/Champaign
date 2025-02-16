@@ -1,24 +1,17 @@
 package baguchi.champaign.packet;
 
 import baguchi.champaign.Champaign;
-import baguchi.champaign.registry.ModAttachments;
+import baguchi.champaign.attachment.ChampaignAttachment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.minecraftforge.network.NetworkEvent;
 
-public class SyncAllayPacket implements CustomPacketPayload, IPayloadHandler<SyncAllayPacket> {
+import java.util.function.Supplier;
 
-    public static final StreamCodec<FriendlyByteBuf, SyncAllayPacket> STREAM_CODEC = CustomPacketPayload.codec(
-            SyncAllayPacket::write, SyncAllayPacket::new
-    );
-    public static final Type<SyncAllayPacket> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Champaign.MODID, "sync_allay"));
+public class SyncAllayPacket {
 
     private final int entityId;
 
@@ -37,28 +30,24 @@ public class SyncAllayPacket implements CustomPacketPayload, IPayloadHandler<Syn
         this.allayMaxCount = allayMaxCount;
     }
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
-    }
-
-    public void write(FriendlyByteBuf buffer) {
+    public void serialize(FriendlyByteBuf buffer) {
         buffer.writeInt(this.entityId);
         buffer.writeInt(this.allayCount);
         buffer.writeInt(this.allayMaxCount);
     }
 
-    public SyncAllayPacket(FriendlyByteBuf buffer) {
-        this(buffer.readInt(), buffer.readInt(), buffer.readInt());
+    public static SyncAllayPacket deserialize(FriendlyByteBuf buffer) {
+        return new SyncAllayPacket(buffer.readInt(), buffer.readInt(), buffer.readInt());
     }
 
-    public void handle(SyncAllayPacket message, IPayloadContext context) {
-        context.enqueueWork(() -> {
+
+    public static void handle(SyncAllayPacket message, Supplier<NetworkEvent.Context> contextSupplier) {
+        contextSupplier.get().enqueueWork(() -> {
             Entity entity = (Minecraft.getInstance()).player.level().getEntity(message.entityId);
             if (entity != null && entity instanceof Player player) {
-                baguchi.champaign.attachment.ChampaignAttachment cap = player.getData(ModAttachments.CHAMPAIGN);
-                cap.setAllayCount(this.allayCount, player);
-                cap.setMaxAllayCount(this.allayMaxCount, player);
+                baguchi.champaign.attachment.ChampaignAttachment cap = player.getCapability(Champaign.CHAMPAIGN_CAPABILITY).orElse(new ChampaignAttachment());
+                cap.setAllayCount(message.allayCount, player);
+                cap.setMaxAllayCount(message.allayMaxCount, player);
             }
         });
 

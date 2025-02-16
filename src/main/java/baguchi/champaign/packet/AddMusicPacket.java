@@ -4,23 +4,16 @@ import baguchi.champaign.Champaign;
 import baguchi.champaign.attachment.ChampaignAttachment;
 import baguchi.champaign.client.render.toast.LearningToast;
 import baguchi.champaign.music.MusicSummon;
-import baguchi.champaign.registry.ModAttachments;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.minecraftforge.network.NetworkEvent;
 
-public class AddMusicPacket implements CustomPacketPayload, IPayloadHandler<AddMusicPacket> {
+import java.util.function.Supplier;
 
-    public static final StreamCodec<FriendlyByteBuf, AddMusicPacket> STREAM_CODEC = CustomPacketPayload.codec(
-            AddMusicPacket::write, AddMusicPacket::new
-    );
-    public static final CustomPacketPayload.Type<AddMusicPacket> TYPE = new Type<>(Champaign.prefix("add_music"));
+public class AddMusicPacket {
 
 
     private int entityId;
@@ -40,30 +33,24 @@ public class AddMusicPacket implements CustomPacketPayload, IPayloadHandler<AddM
         this.makeToast = toast;
     }
 
-    public void write(FriendlyByteBuf buffer) {
+    public void serialize(FriendlyByteBuf buffer) {
         buffer.writeInt(this.entityId);
         buffer.writeJsonWithCodec(MusicSummon.CODEC, this.musicSummon);
         buffer.writeBoolean(this.makeToast);
     }
 
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+    public static AddMusicPacket deserialize(FriendlyByteBuf buffer) {
+        return new AddMusicPacket(buffer.readInt(), buffer.readJsonWithCodec(MusicSummon.CODEC), buffer.readBoolean());
     }
 
-    public AddMusicPacket(FriendlyByteBuf buffer) {
-        this(buffer.readInt(), buffer.readJsonWithCodec(MusicSummon.CODEC), buffer.readBoolean());
-    }
-
-    @Override
-    public void handle(AddMusicPacket message, IPayloadContext context) {
-        context.enqueueWork(() -> {
+    public static void handle(AddMusicPacket message, Supplier<NetworkEvent.Context> contextSupplier) {
+        contextSupplier.get().enqueueWork(() -> {
             Entity entity = Minecraft.getInstance().player.level().getEntity(message.entityId);
             if (entity != null && entity instanceof Player player) {
-                ChampaignAttachment attachment = player.getData(ModAttachments.CHAMPAIGN);
-                attachment.addMusicList(Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(musicSummon), player);
-                if (player == Minecraft.getInstance().player && makeToast) {
-                    Minecraft.getInstance().getToasts().addToast(new LearningToast(Component.translatable("toast.champaign.learning"), Component.translatable("toast.champaign.learn_entity", musicSummon.entityType().getDescription())));
+                ChampaignAttachment attachment = player.getCapability(Champaign.CHAMPAIGN_CAPABILITY).orElse(new ChampaignAttachment());
+                attachment.addMusicList(Champaign.registryAccess().registryOrThrow(MusicSummon.REGISTRY_KEY).wrapAsHolder(message.musicSummon), player);
+                if (player == Minecraft.getInstance().player && message.makeToast) {
+                    Minecraft.getInstance().getToasts().addToast(new LearningToast(Component.translatable("toast.champaign.learning"), Component.translatable("toast.champaign.learn_entity", message.musicSummon.entityType().getDescription())));
                 }
             }
         });

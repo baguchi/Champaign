@@ -12,7 +12,6 @@ import baguchi.champaign.packet.ChangeMusicSlotPacket;
 import baguchi.champaign.packet.SummonAllayPacket;
 import baguchi.champaign.packet.SummonPacket;
 import baguchi.champaign.registry.ModAnimations;
-import baguchi.champaign.registry.ModAttachments;
 import baguchi.champaign.registry.ModItems;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.client.Minecraft;
@@ -21,16 +20,16 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Champaign.MODID, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = Champaign.MODID, value = Dist.CLIENT)
 public class ClientEvents {
     public static int pressSummonTick;
 
@@ -70,52 +69,54 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getUseItem().is(ModItems.LUTE.get()) && event.getScrollDeltaY() != 0) {
-            onMouseScrolled(event.getScrollDeltaY());
+        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getUseItem().is(ModItems.LUTE.get()) && event.getMouseY() != 0) {
+            onMouseScrolled(event.getMouseY());
 
             event.setCanceled(true);
         }
     }
 
     public static boolean onMouseScrolled(double scrollDelta) {
-        ChampaignAttachment attachment = Minecraft.getInstance().player.getData(ModAttachments.CHAMPAIGN);
+        ChampaignAttachment attachment = Minecraft.getInstance().player.getCapability(Champaign.CHAMPAIGN_CAPABILITY).orElse(new ChampaignAttachment());
         attachment.cycle(scrollDelta > 0 ? 1 : -1);
-        PacketDistributor.sendToServer(new ChangeMusicSlotPacket(scrollDelta > 0 ? 1 : -1));
+        Champaign.CHANNEL.send(PacketDistributor.SERVER.noArg(), new ChangeMusicSlotPacket(scrollDelta > 0 ? 1 : -1));
         return true;
     }
 
 
     @SubscribeEvent
-    public static void onPlayerPostTick(PlayerTickEvent.Post event) {
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getUseItem().is(ModItems.LUTE.get())) {
+    public static void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.getUseItem().is(ModItems.LUTE.get())) {
 
-            if (ModKeyMappings.KEY_SUMMON.isDown()) {
-                if (pressSummonTick <= 0) {
-                    pressSummonTick = 20;
-                    PacketDistributor.sendToServer(new SummonPacket());
-                }
-            }
-        }
-
-        if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isHolding(ModItems.LUTE.get())) {
-
-            if (ModKeyMappings.KEY_SUMMON_ALLAY.isDown()) {
-                if (pressSummonTick <= 0) {
-                    pressSummonTick = 20;
-                    PacketDistributor.sendToServer(new SummonAllayPacket());
+                if (ModKeyMappings.KEY_SUMMON.isDown()) {
+                    if (pressSummonTick <= 0) {
+                        pressSummonTick = 20;
+                        Champaign.CHANNEL.send(PacketDistributor.SERVER.noArg(), new SummonPacket());
+                    }
                 }
             }
 
-            if (ModKeyMappings.KEY_CALL_ALLAY.isDown()) {
-                if (pressSummonTick <= 0) {
-                    pressSummonTick = 20;
-                    PacketDistributor.sendToServer(new CallPacket());
+            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isHolding(ModItems.LUTE.get())) {
+
+                if (ModKeyMappings.KEY_SUMMON_ALLAY.isDown()) {
+                    if (pressSummonTick <= 0) {
+                        pressSummonTick = 20;
+                        Champaign.CHANNEL.send(PacketDistributor.SERVER.noArg(), new SummonAllayPacket());
+                    }
+                }
+
+                if (ModKeyMappings.KEY_CALL_ALLAY.isDown()) {
+                    if (pressSummonTick <= 0) {
+                        pressSummonTick = 20;
+                        Champaign.CHANNEL.send(PacketDistributor.SERVER.noArg(), new CallPacket());
+                    }
                 }
             }
-        }
 
-        if (pressSummonTick > 0) {
-            --pressSummonTick;
+            if (pressSummonTick > 0) {
+                --pressSummonTick;
+            }
         }
     }
 

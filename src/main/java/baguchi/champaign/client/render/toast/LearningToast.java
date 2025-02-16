@@ -14,7 +14,7 @@ import net.minecraft.util.Mth;
 import java.util.List;
 
 public class LearningToast implements Toast {
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/advancement");
+    private static final ResourceLocation BACKGROUND_SPRITE = new ResourceLocation("textures/gui/toasts.png");
     private final Component title;
     private final Component description;
     private long lastChanged;
@@ -30,7 +30,7 @@ public class LearningToast implements Toast {
 
     @Override
     public Toast.Visibility render(GuiGraphics p_281813_, ToastComponent p_282243_, long p_282604_) {
-        p_281813_.blitSprite(BACKGROUND_SPRITE, 0, 0, this.width(), this.height());
+        p_281813_.blit(TEXTURE, 0, 0, 0, 32, this.width(), this.height());
 
         List<FormattedCharSequence> list = p_282243_.getMinecraft().font.split(title, 125);
         int i = 16746751;
@@ -60,7 +60,7 @@ public class LearningToast implements Toast {
 
         }
 
-        p_281813_.renderFakeItem(ModItems.MUSIC_PATTERN.toStack(), 8, 8);
+        p_281813_.renderFakeItem(ModItems.MUSIC_PATTERN.get().getDefaultInstance(), 8, 8);
         return (double) p_282604_ >= 5000.0 * p_282243_.getNotificationDisplayTimeMultiplier() ? Toast.Visibility.HIDE : Toast.Visibility.SHOW;
     }
 }

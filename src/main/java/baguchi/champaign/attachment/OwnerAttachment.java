@@ -1,12 +1,18 @@
 package baguchi.champaign.attachment;
 
-import net.minecraft.core.HolderLookup;
+import baguchi.champaign.Champaign;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class OwnerAttachment implements INBTSerializable<CompoundTag> {
+public class OwnerAttachment implements ICapabilityProvider, ICapabilitySerializable<CompoundTag> {
     private UUID ownerID;
 
     public UUID getOwnerID() {
@@ -17,8 +23,13 @@ public class OwnerAttachment implements INBTSerializable<CompoundTag> {
         this.ownerID = ownerID;
     }
 
+    @Nonnull
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
+        return (capability == Champaign.OWNER_CAPABILITY) ? LazyOptional.of(() -> this).cast() : LazyOptional.empty();
+    }
+
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
 
         if (this.ownerID != null) {
@@ -28,7 +39,7 @@ public class OwnerAttachment implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         if (nbt.contains("OwnerId")) {
             this.ownerID = nbt.getUUID("OwnerId");
         }

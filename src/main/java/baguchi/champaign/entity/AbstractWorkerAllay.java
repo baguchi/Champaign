@@ -21,7 +21,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -168,7 +167,7 @@ public abstract class AbstractWorkerAllay extends PathfinderMob implements Inven
         super.dropEquipment();
         this.inventory.removeAllItems().forEach(p_375836_ -> this.spawnAtLocation(p_375836_));
         ItemStack itemstack = this.getItemBySlot(EquipmentSlot.MAINHAND);
-        if (!itemstack.isEmpty() && !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
+        if (!itemstack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemstack)) {
             this.spawnAtLocation(itemstack);
             this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
@@ -177,13 +176,13 @@ public abstract class AbstractWorkerAllay extends PathfinderMob implements Inven
     @Override
     public void addAdditionalSaveData(CompoundTag p_218367_) {
         super.addAdditionalSaveData(p_218367_);
-        this.writeInventoryToTag(p_218367_, this.registryAccess());
+        this.writeInventoryToTag(p_218367_);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag p_218350_) {
         super.readAdditionalSaveData(p_218350_);
-        this.readInventoryFromTag(p_218350_, this.registryAccess());
+        this.readInventoryFromTag(p_218350_);
     }
 
     public void giveResource() {
