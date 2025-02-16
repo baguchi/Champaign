@@ -62,6 +62,7 @@ public class Champaign
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::commonDataSetup);
+        this.setupMessages();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

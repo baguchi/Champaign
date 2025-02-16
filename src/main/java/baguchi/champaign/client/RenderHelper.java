@@ -17,14 +17,15 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
 public class RenderHelper {
     private static Gui ingameGui;
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Champaign.MODID, "gui/sprites/hud/hotbar");
-    private static final ResourceLocation TEXTURE_SELECT = new ResourceLocation(Champaign.MODID, "gui/sprites/hud/hotbar_select");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Champaign.MODID, "textures/gui/sprites/hud/hotbar.png");
+    private static final ResourceLocation TEXTURE_SELECT = new ResourceLocation(Champaign.MODID, "textures/gui/sprites/hud/hotbar_select.png");
 
 
     private static void renderSlot(GuiGraphics graphics, int pX, int pY, MusicSummon musicSummon) {
@@ -32,8 +33,10 @@ public class RenderHelper {
             Entity entity = musicSummon.getEntityType().create(Minecraft.getInstance().level);
             if (entity instanceof LivingEntity livingEntity) {
                 graphics.pose().pushPose();
-
-                InventoryScreen.renderEntityInInventoryFollowsAngle(graphics, pX + 2, pY + 2, pX + 19, pY + 19, 25, livingEntity);
+                Quaternionf quaternionf = (new Quaternionf()).rotateZ((float) Math.PI);
+                Quaternionf quaternionf1 = (new Quaternionf()).rotateX(0 * 20.0F * ((float) Math.PI / 180F));
+                quaternionf.mul(quaternionf1);
+                InventoryScreen.renderEntityInInventory(graphics, pX + 12, pY + 14, 12, quaternionf, quaternionf1, livingEntity);
 
                 graphics.pose().popPose();
                 graphics.pose().pushPose();
@@ -69,16 +72,16 @@ public class RenderHelper {
                 int jx = px - 10 - i * 20;
                 if (!list.isEmpty() && list.size() > i) {
                     renderSlot(graphics, jx, py, list.get(i).value());
-                    graphics.blit(TEXTURE, jx, py, 0, 0, 22, 22);
+                    graphics.blit(TEXTURE, jx, py, 0, 0, 22, 22, 22, 22);
 
                 } else {
                     renderSlot(graphics, jx, py, null);
-                    graphics.blit(TEXTURE, jx, py, 0, 0, 22, 22);
+                    graphics.blit(TEXTURE, jx, py, 0, 0, 22, 22, 22, 22);
                 }
             }
             if (selected < slots) {
                 int jx = px - 10 - selected * 20;
-                graphics.blit(TEXTURE_SELECT, jx - 1, py - 1, 0, 0, 24, 24);
+                graphics.blit(TEXTURE_SELECT, jx - 1, py - 1, 0, 0, 24, 24, 24, 24);
             }
 
 

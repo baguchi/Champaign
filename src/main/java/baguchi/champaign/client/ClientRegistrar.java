@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = Champaign.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistrar {
 
-    private static final ResourceLocation ALLAY_GUI_TEXTURE = new ResourceLocation(Champaign.MODID, "gui/sprites/allay_hotbar.png");
+    private static final ResourceLocation ALLAY_GUI_TEXTURE = new ResourceLocation(Champaign.MODID, "textures/gui/sprites/allay_hotbar.png");
 
 
     @SubscribeEvent
@@ -74,13 +74,13 @@ public class ClientRegistrar {
         if (humanoidarm == HumanoidArm.LEFT) {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            guiGraphics.blit(ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 0, 0, 22, 22);
+            guiGraphics.blit(ALLAY_GUI_TEXTURE, i - 91 - 26, i2, 0, 0, 22, 22, 22, 22);
             String s = String.valueOf(attachment.getAllayCount());
             guiGraphics.drawString(minecraft.font, s, i - 91 - 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
         } else {
 
             guiGraphics.pose().translate(0.0F, 0.0F, 200.0F);
-            guiGraphics.blit(ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 0, 0, 22, 22);
+            guiGraphics.blit(ALLAY_GUI_TEXTURE, i + 91 + 26, i2, 0, 0, 22, 22, 22, 22);
             String s = String.valueOf(attachment.getAllayCount());
             guiGraphics.drawString(minecraft.font, s, i + 91 + 26 + 19 - 2 - minecraft.font.width(s), i2 + 6 + 3, 16777215, true);
 
