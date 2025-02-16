@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -17,9 +16,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import org.joml.Quaternionf;
 
 import java.util.List;
+
+import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventoryFollowsAngle;
 
 public class RenderHelper {
     private static Gui ingameGui;
@@ -33,13 +33,7 @@ public class RenderHelper {
             Entity entity = musicSummon.getEntityType().create(Minecraft.getInstance().level);
             if (entity instanceof LivingEntity livingEntity) {
                 graphics.pose().pushPose();
-                Quaternionf quaternionf = (new Quaternionf()).rotateZ((float) Math.PI);
-                Quaternionf quaternionf1 = (new Quaternionf()).rotateX(0 * 20.0F * ((float) Math.PI / 180F));
-                quaternionf.mul(quaternionf1);
-                livingEntity.yBodyRot = 180.0F;
-                livingEntity.setYRot(180.0F);
-                livingEntity.setXRot(0);
-                InventoryScreen.renderEntityInInventory(graphics, pX + 12, pY + 14, 12, quaternionf, quaternionf1, livingEntity);
+                renderEntityInInventoryFollowsMouse(graphics, pX + 12, pY + 14, 12, 0F, 0F, livingEntity);
 
                 graphics.pose().popPose();
                 graphics.pose().pushPose();
@@ -51,6 +45,12 @@ public class RenderHelper {
                 graphics.pose().popPose();
             }
         }
+    }
+
+    public static void renderEntityInInventoryFollowsMouse(GuiGraphics p_282802_, int p_275688_, int p_275245_, int p_275535_, float p_275604_, float p_275546_, LivingEntity p_275689_) {
+        float f = (float) Math.atan((double) (p_275604_ / 40.0F));
+        float f1 = (float) Math.atan((double) (p_275546_ / 40.0F));
+        renderEntityInInventoryFollowsAngle(p_282802_, p_275688_, p_275245_, p_275535_, f, f1, p_275689_);
     }
 
     public static void renderEntityContent(GuiGraphics graphics, int screenWidth, int screenHeight) {
