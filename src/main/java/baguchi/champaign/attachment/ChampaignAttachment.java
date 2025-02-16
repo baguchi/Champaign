@@ -18,10 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -140,6 +137,9 @@ public class ChampaignAttachment implements ICapabilityProvider, ICapabilitySeri
                     for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
                         mob.setDropChance(equipmentslot, 0.0F);
                     }
+                }
+                if (entity instanceof TamableAnimal mob) {
+                    mob.tame(player);
                 }
                 if (!player.isCreative()) {
                     player.getInventory().clearOrCountMatchingItems(predicate -> {

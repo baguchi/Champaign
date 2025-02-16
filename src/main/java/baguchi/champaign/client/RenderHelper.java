@@ -36,6 +36,9 @@ public class RenderHelper {
                 Quaternionf quaternionf = (new Quaternionf()).rotateZ((float) Math.PI);
                 Quaternionf quaternionf1 = (new Quaternionf()).rotateX(0 * 20.0F * ((float) Math.PI / 180F));
                 quaternionf.mul(quaternionf1);
+                livingEntity.yBodyRot = 180.0F;
+                livingEntity.setYRot(180.0F);
+                livingEntity.setXRot(0);
                 InventoryScreen.renderEntityInInventory(graphics, pX + 12, pY + 14, 12, quaternionf, quaternionf1, livingEntity);
 
                 graphics.pose().popPose();

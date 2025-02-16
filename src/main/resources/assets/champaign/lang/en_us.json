@@ -11,7 +11,7 @@
   "item.champaign.lute.tooltip.description2": "Change Music",
   "item.champaign.lute.tooltip.description3": "Summon Allay",
   "item.champaign.lute.tooltip.description4": "Call Allay",
-  "toast.champaign.learn_entity": "You Learned %s",
-  "toast.champaign.learning": "You Learned Music!",
+  "toast.champaign.learn_entity": "Learned %s",
+  "toast.champaign.learning": "Learned Music!",
   "campaign.config.enable_campaign": "Enable Campaign Mode"
 }
