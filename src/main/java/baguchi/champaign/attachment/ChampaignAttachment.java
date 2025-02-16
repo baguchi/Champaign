@@ -21,6 +21,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
@@ -132,6 +133,9 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                 if (entity instanceof Mob mob) {
                     mob.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
                     mob.dropPreservedEquipment();
+                }
+                if (entity instanceof TamableAnimal mob) {
+                    mob.tame(player);
                 }
                 if (!player.isCreative()) {
                     player.getInventory().clearOrCountMatchingItems(predicate -> {

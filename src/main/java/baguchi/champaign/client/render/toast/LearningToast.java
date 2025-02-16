@@ -14,7 +14,7 @@ import net.minecraft.util.Mth;
 import java.util.List;
 
 public class LearningToast implements Toast {
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/advancement");
+    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("toast/recipe");
     private final Component title;
     private final Component description;
     private long lastChanged;
