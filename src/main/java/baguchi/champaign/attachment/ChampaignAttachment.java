@@ -222,9 +222,6 @@ public class ChampaignAttachment implements INBTSerializable<CompoundTag> {
                 this.sync = true;
             }
         }
-        if (this.sync) {
-            //PacketDistributor.sendToPlayer(serverPlayer, new GuidebookToastPacket(GuidebookToast.Icons.BESTIARY, "gui.aether_ii.toast.guidebook.bestiary", "gui.aether_ii.toast.guidebook.description"));
-        }
     }
 
     public List<Holder<MusicSummon>> getMusicList() {
