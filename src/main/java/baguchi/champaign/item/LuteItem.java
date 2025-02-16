@@ -1,5 +1,7 @@
 package baguchi.champaign.item;
 
+import bagu_chan.bagus_lib.util.client.AnimationUtil;
+import baguchi.champaign.registry.ModAnimations;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -37,18 +39,18 @@ public class LuteItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         player.startUsingItem(hand);
-        /*if (!level.isClientSide()) {
+        if (!level.isClientSide()) {
             AnimationUtil.sendAnimation(player, ModAnimations.PLAYING_LUTE);
-        }*/
+        }
         return InteractionResultHolder.consume(itemstack);
     }
 
     @Override
     public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
         super.onStopUsing(stack, entity, count);
-        /*if (!entity.level().isClientSide()) {
+        if (!entity.level().isClientSide()) {
             AnimationUtil.sendStopAnimation(entity, ModAnimations.PLAYING_LUTE);
-        }*/
+        }
     }
 
     @Override

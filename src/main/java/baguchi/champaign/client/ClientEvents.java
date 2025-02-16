@@ -16,6 +16,7 @@ import baguchi.champaign.registry.ModItems;
 import baguchi.champaign.registry.ModKeyMappings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
@@ -62,6 +63,12 @@ public class ClientEvents {
                     } else {
                         rootModel.animateBagu(controller.getAnimationState(ModAnimations.PLAYING_LUTE), LuteAnimation.lute_playing_left, event.getAgeInTick());
                     }
+                }
+                if (event.getModel() instanceof PlayerModel<?> playerModel) {
+                    playerModel.leftPants.copyFrom(playerModel.leftLeg);
+                    playerModel.rightPants.copyFrom(playerModel.rightLeg);
+                    playerModel.leftSleeve.copyFrom(playerModel.leftArm);
+                    playerModel.rightSleeve.copyFrom(playerModel.rightArm);
                 }
             }
         }
