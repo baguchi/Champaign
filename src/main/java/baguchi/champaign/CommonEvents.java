@@ -38,7 +38,7 @@ public class CommonEvents {
         }
 
         if (event.getOriginalAboutToBeSetTarget() != null) {
-            OwnerAttachment attachment1 = entity.getData(ModAttachments.OWNER);
+            OwnerAttachment attachment1 = event.getOriginalAboutToBeSetTarget().getData(ModAttachments.OWNER);
             if (attachment.getOwnerID() != null && attachment.getOwnerID() == attachment1.getOwnerID()) {
                 event.setNewAboutToBeSetTarget(null);
                 event.setCanceled(true);
