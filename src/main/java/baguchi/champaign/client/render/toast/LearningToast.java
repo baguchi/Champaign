@@ -48,7 +48,7 @@ public class LearningToast implements Toast {
                 int l = this.height() / 2 - list.size() * 9 / 2;
 
                 for (FormattedCharSequence formattedcharsequence : list) {
-                    p_281813_.drawString(p_282243_.getMinecraft().font, formattedcharsequence, 30, l, -11534256 | i1, false);
+                    p_281813_.drawString(p_282243_.getMinecraft().font, formattedcharsequence, 30, l, -11534256, false);
                     l += 9;
                 }
                 }

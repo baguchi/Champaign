@@ -38,7 +38,7 @@ public class CommonEvents {
         }
 
         if (event.getOriginalAboutToBeSetTarget() != null) {
-            OwnerAttachment attachment1 = entity.getData(ModAttachments.OWNER);
+            OwnerAttachment attachment1 = event.getOriginalAboutToBeSetTarget().getData(ModAttachments.OWNER);
             if (attachment.getOwnerID() != null && attachment.getOwnerID() == attachment1.getOwnerID()) {
                 event.setNewAboutToBeSetTarget(null);
                 event.setCanceled(true);
@@ -62,6 +62,8 @@ public class CommonEvents {
             Player player = entity.level().getPlayerByUUID(attachment.getOwnerID());
             if (player != null && entity instanceof Mob livingEntity && player.getLastHurtByMob() != null) {
                 livingEntity.setTarget(player.getLastHurtByMob());
+            } else if (player != null && entity instanceof Mob livingEntity && player.getLastHurtMob() != null) {
+                livingEntity.setTarget(player.getLastHurtMob());
             }
         }
     }
