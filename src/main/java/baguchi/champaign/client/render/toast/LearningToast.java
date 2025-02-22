@@ -35,8 +35,8 @@ public class LearningToast implements Toast {
         List<FormattedCharSequence> list = p_282243_.getMinecraft().font.split(title, 125);
         int i = 16746751;
         if (list.size() == 1) {
-            p_281813_.drawString(p_282243_.getMinecraft().font, description, 30, 7, i | 0xFF000000, false);
-            p_281813_.drawString(p_282243_.getMinecraft().font, list.get(0), 30, 18, -1, false);
+            p_281813_.drawString(p_282243_.getMinecraft().font, description, 30, 7, -11534256, false);
+            p_281813_.drawString(p_282243_.getMinecraft().font, list.get(0), 30, 18, -11534256, false);
         } else {
             int j = 1500;
             float f = 300.0F;
@@ -48,7 +48,7 @@ public class LearningToast implements Toast {
                 int l = this.height() / 2 - list.size() * 9 / 2;
 
                 for (FormattedCharSequence formattedcharsequence : list) {
-                    p_281813_.drawString(p_282243_.getMinecraft().font, formattedcharsequence, 30, l, 16777215 | i1, false);
+                    p_281813_.drawString(p_282243_.getMinecraft().font, formattedcharsequence, 30, l, -11534256 | i1, false);
                     l += 9;
                 }
                 }

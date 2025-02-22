@@ -55,6 +55,15 @@ public class CommonEvents {
             event.setCanceled(true);
         }
 
+        if (event.getOriginalTarget() != null) {
+            OwnerAttachment attachment1 = event.getOriginalTarget().getCapability(Champaign.OWNER_CAPABILITY).orElse(new OwnerAttachment());
+
+            if (attachment.getOwnerID() != null && attachment.getOwnerID() == attachment1.getOwnerID()) {
+                event.setNewTarget(null);
+                event.setCanceled(true);
+            }
+        }
+
         if (event.getOriginalTarget() != null && attachment.getOwnerID() != null) {
             OwnerAttachment attachment2 = event.getOriginalTarget().getCapability(Champaign.OWNER_CAPABILITY).orElse(new OwnerAttachment());
             if (attachment.getOwnerID() == attachment2.getOwnerID()) {
@@ -64,6 +73,7 @@ public class CommonEvents {
         }
     }
 
+
     @SubscribeEvent
     public static void onTickTarget(LivingEvent.LivingTickEvent event) {
         Entity entity = event.getEntity();
@@ -72,6 +82,8 @@ public class CommonEvents {
             Player player = entity.level().getPlayerByUUID(attachment.getOwnerID());
             if (player != null && entity instanceof Mob livingEntity && player.getLastHurtByMob() != null) {
                 livingEntity.setTarget(player.getLastHurtByMob());
+            } else if (player != null && entity instanceof Mob livingEntity && player.getLastHurtMob() != null) {
+                livingEntity.setTarget(player.getLastHurtMob());
             }
         }
     }
